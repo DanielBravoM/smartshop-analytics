@@ -3,23 +3,18 @@ require('dotenv').config();
 module.exports = {
   PORT: process.env.PORT || 4000,
   NODE_ENV: process.env.NODE_ENV || 'development',
+  JWT_SECRET: process.env.JWT_SECRET,
   
   postgres: {
-    host: process.env.POSTGRES_HOST || 'postgres',
-    port: parseInt(process.env.POSTGRES_PORT) || 5432,
-    database: process.env.POSTGRES_DB || 'smartshop',
-    user: process.env.POSTGRES_USER || 'admin',
-    password: process.env.POSTGRES_PASSWORD || 'admin123'
+    host: process.env.POSTGRES_HOST,
+    port: parseInt(process.env.POSTGRES_PORT),
+    database: process.env.POSTGRES_DB,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD
   },
   
   mongodb: {
-    host: process.env.MONGO_HOST || 'mongodb',
-    port: parseInt(process.env.MONGO_PORT) || 27017,
-    database: process.env.MONGO_DB || 'smartshop',
-    user: process.env.MONGO_USER || 'admin',
-    password: process.env.MONGO_PASSWORD || 'admin123',
-    get uri() {
-      return `mongodb://${this.user}:${this.password}@${this.host}:${this.port}/`;
-    }
+    uri: process.env.MONGO_URI,
+    database: process.env.MONGO_DB
   }
 };
