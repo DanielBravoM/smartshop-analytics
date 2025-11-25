@@ -245,5 +245,3 @@ SELECT * FROM users; -- Ver usuarios
 docker exec -it smartshop-mongodb mongosh smartshop
 ```
 ---
-
-⭐️ Si te ha gustado este proyecto, no olvides darle una estrella en GitHub
