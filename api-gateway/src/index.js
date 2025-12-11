@@ -103,24 +103,6 @@ app.use('/api/comparator', createProxyMiddleware({
   }
 }));
 
-// Proxy para Analytics Service (Node.js)
-app.use('/api/v1/analytics', async (req, res) => {
-  try {
-    const response = await axios({
-      method: req.method,
-      url: `${NODE_SERVICE_URL}${req.originalUrl.replace('/api/v1/analytics', '/analytics')}`,
-      data: req.body,
-      headers: { 'Content-Type': 'application/json' }
-    });
-    res.status(response.status).json(response.data);
-  } catch (error) {
-    console.error('Error calling Node service:', error.message);
-    res.status(error.response?.status || 500).json({
-      error: 'Error al comunicarse con el servicio de analytics'
-    });
-  }
-});
-
 // Proxy para Alertas
 app.use('/api/v1/alerts', async (req, res) => {
   try {
@@ -163,6 +145,20 @@ app.post('/api/v1/auth/login', async (req, res) => {
     }
 });
 
+// Generar datos de prueba
+app.post('/api/v1/generate-test-data', async (req, res) => {
+    try {
+        const response = await axios.post(`${NODE_SERVICE_URL}/generate-test-data`);
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error generando datos:', error.message);
+        res.status(500).json({ 
+            success: false, 
+            error: error.message 
+        });
+    }
+});
+
 app.get('/api/v1/auth/verify', async (req, res) => {
     try {
         const token = req.headers.authorization;
@@ -190,6 +186,89 @@ app.post('/api/v1/admin/products', async (req, res) => {
     }
 });
 
+app.get('/api/v1/analytics', async (req, res) => {
+    try {
+        console.log('=== DEBUG ANALYTICS ===');
+        console.log('Headers recibidos:', req.headers);
+        console.log('Authorization header:', req.headers.authorization);
+        
+        const headers = {};
+        if (req.headers.authorization) {
+            headers.Authorization = req.headers.authorization;
+        }
+        
+        console.log('Headers a enviar:', headers);
+        
+        const response = await axios.get(`${NODE_SERVICE_URL}/analytics`, { headers });
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error en analytics:', error.message);
+        console.error('Status:', error.response?.status);
+        console.error('Data:', error.response?.data);
+        res.status(error.response?.status || 503).json(
+            error.response?.data || { 
+                success: false, 
+                error: 'Servicio de analytics no disponible' 
+            }
+        );
+    }
+});
+
+// ========================================
+// RUTAS DE SEGUIMIENTO DE PRODUCTOS
+// ========================================
+app.post('/api/v1/user-products/follow/:productId', async (req, res) => {
+    try {
+        const token = req.headers.authorization;
+        const response = await axios.post(
+            `${NODE_SERVICE_URL}/user-products/follow/${req.params.productId}`,
+            {},
+            { headers: { Authorization: token } }
+        );
+        res.json(response.data);
+    } catch (error) {
+        res.status(error.response?.status || 500).json(error.response?.data || { error: error.message });
+    }
+});
+
+app.delete('/api/v1/user-products/unfollow/:productId', async (req, res) => {
+    try {
+        const token = req.headers.authorization;
+        const response = await axios.delete(
+            `${NODE_SERVICE_URL}/user-products/unfollow/${req.params.productId}`,
+            { headers: { Authorization: token } }
+        );
+        res.json(response.data);
+    } catch (error) {
+        res.status(error.response?.status || 500).json(error.response?.data || { error: error.message });
+    }
+});
+
+app.get('/api/v1/user-products/following', async (req, res) => {
+    try {
+        const token = req.headers.authorization;
+        const response = await axios.get(
+            `${NODE_SERVICE_URL}/user-products/following`,
+            { headers: { Authorization: token } }
+        );
+        res.json(response.data);
+    } catch (error) {
+        res.status(error.response?.status || 500).json(error.response?.data || { error: error.message });
+    }
+});
+
+app.get('/api/v1/user-products/is-following/:productId', async (req, res) => {
+    try {
+        const token = req.headers.authorization;
+        const response = await axios.get(
+            `${NODE_SERVICE_URL}/user-products/is-following/${req.params.productId}`,
+            { headers: { Authorization: token } }
+        );
+        res.json(response.data);
+    } catch (error) {
+        res.status(error.response?.status || 500).json(error.response?.data || { error: error.message });
+    }
+});
 app.get('/api/v1/admin/products', async (req, res) => {
     try {
         const token = req.headers.authorization;

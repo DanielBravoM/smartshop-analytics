@@ -12,7 +12,7 @@ function Admin() {
     const [newProduct, setNewProduct] = useState({
         external_id: '',
         title: '',
-        brand: 'Amazon',
+        brand: '',
         current_price: '',
         marketplace: 'amazon',
         category: 'electronics',
@@ -46,7 +46,7 @@ function Admin() {
 
     const handleAddProduct = async (e) => {
         e.preventDefault();
-        
+
         if (!newProduct.external_id || !newProduct.title || !newProduct.current_price) {
             setMessage('❌ Completa los campos obligatorios: ASIN, Título y Precio');
             return;
@@ -55,14 +55,14 @@ function Admin() {
         try {
             setLoading(true);
             await axios.post(`${API_URL}/admin/products`, newProduct);
-            
+
             setMessage('✅ Producto añadido correctamente');
-            
+
             // Limpiar formulario
             setNewProduct({
                 external_id: '',
                 title: '',
-                brand: 'Amazon',
+                brand: '',
                 current_price: '',
                 marketplace: 'amazon',
                 category: 'electronics',
@@ -70,7 +70,7 @@ function Admin() {
                 review_count: '',
                 image_url: ''
             });
-            
+
             // Recargar lista
             setTimeout(() => loadProducts(), 500);
         } catch (error) {
@@ -83,7 +83,7 @@ function Admin() {
 
     const handleUpdatePrice = async (e) => {
         e.preventDefault();
-        
+
         if (!updatePrice.product_id || !updatePrice.new_price) {
             setMessage('❌ Selecciona un producto y un nuevo precio');
             return;
@@ -95,12 +95,12 @@ function Admin() {
                 `${API_URL}/admin/products/${updatePrice.product_id}/price`,
                 { new_price: updatePrice.new_price }
             );
-            
+
             setMessage('✅ Precio actualizado correctamente');
-            
+
             // Limpiar formulario
             setUpdatePrice({ product_id: '', new_price: '' });
-            
+
             // Recargar lista
             setTimeout(() => loadProducts(), 500);
         } catch (error) {
@@ -119,9 +119,9 @@ function Admin() {
         try {
             setLoading(true);
             await axios.delete(`${API_URL}/admin/products/${productId}`);
-            
+
             setMessage('✅ Producto eliminado correctamente');
-            
+
             // Recargar lista
             setTimeout(() => loadProducts(), 500);
         } catch (error) {
@@ -139,11 +139,10 @@ function Admin() {
 
                 {/* Mensajes */}
                 {message && (
-                    <div className={`mb-6 p-4 rounded-lg ${
-                        message.includes('✅') 
-                            ? 'bg-green-100 text-green-800 border border-green-200' 
+                    <div className={`mb-6 p-4 rounded-lg ${message.includes('✅')
+                            ? 'bg-green-100 text-green-800 border border-green-200'
                             : 'bg-red-100 text-red-800 border border-red-200'
-                    }`}>
+                        }`}>
                         <p className="font-medium">{message}</p>
                     </div>
                 )}
@@ -160,7 +159,7 @@ function Admin() {
                                 <input
                                     type="text"
                                     value={newProduct.external_id}
-                                    onChange={(e) => setNewProduct({...newProduct, external_id: e.target.value})}
+                                    onChange={(e) => setNewProduct({ ...newProduct, external_id: e.target.value })}
                                     placeholder="B09B8V1LZ3"
                                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
                                     required
@@ -174,7 +173,7 @@ function Admin() {
                                 <input
                                     type="text"
                                     value={newProduct.title}
-                                    onChange={(e) => setNewProduct({...newProduct, title: e.target.value})}
+                                    onChange={(e) => setNewProduct({ ...newProduct, title: e.target.value })}
                                     placeholder="Echo Dot 5ª Gen"
                                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
                                     required
@@ -188,10 +187,47 @@ function Admin() {
                                 <input
                                     type="text"
                                     value={newProduct.brand}
-                                    onChange={(e) => setNewProduct({...newProduct, brand: e.target.value})}
-                                    placeholder="Amazon"
+                                    onChange={(e) => setNewProduct({ ...newProduct, brand: e.target.value })}
+                                    placeholder="Nike, Adidas, Apple..."
                                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
                                 />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Categoría
+                                </label>
+                                <select
+                                    value={newProduct.category}
+                                    onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
+                                >
+                                    <option value="electronics">📱 Electrónica</option>
+                                    <option value="fashion">👕 Moda</option>
+                                    <option value="sports">⚽ Deportes</option>
+                                    <option value="home">🏠 Hogar</option>
+                                    <option value="books">📚 Libros</option>
+                                    <option value="toys">🧸 Juguetes</option>
+                                    <option value="beauty">💄 Belleza</option>
+                                    <option value="food">🍔 Alimentación</option>
+                                    <option value="automotive">🚗 Automoción</option>
+                                    <option value="other">📦 Otros</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Marketplace
+                                </label>
+                                <select
+                                    value={newProduct.marketplace}
+                                    onChange={(e) => setNewProduct({ ...newProduct, marketplace: e.target.value })}
+                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
+                                >
+                                    <option value="amazon">Amazon</option>
+                                    <option value="ebay">eBay</option>
+                                    <option value="aliexpress">AliExpress</option>
+                                    <option value="mercadolibre">Mercado Libre</option>
+                                </select>
                             </div>
 
                             <div>
@@ -202,7 +238,7 @@ function Admin() {
                                     type="number"
                                     step="0.01"
                                     value={newProduct.current_price}
-                                    onChange={(e) => setNewProduct({...newProduct, current_price: e.target.value})}
+                                    onChange={(e) => setNewProduct({ ...newProduct, current_price: e.target.value })}
                                     placeholder="59.99"
                                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
                                     required
@@ -219,7 +255,7 @@ function Admin() {
                                     min="0"
                                     max="5"
                                     value={newProduct.rating}
-                                    onChange={(e) => setNewProduct({...newProduct, rating: e.target.value})}
+                                    onChange={(e) => setNewProduct({ ...newProduct, rating: e.target.value })}
                                     placeholder="4.7"
                                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
                                 />
@@ -232,7 +268,7 @@ function Admin() {
                                 <input
                                     type="number"
                                     value={newProduct.review_count}
-                                    onChange={(e) => setNewProduct({...newProduct, review_count: e.target.value})}
+                                    onChange={(e) => setNewProduct({ ...newProduct, review_count: e.target.value })}
                                     placeholder="12450"
                                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
                                 />
@@ -245,7 +281,7 @@ function Admin() {
                                 <input
                                     type="text"
                                     value={newProduct.image_url}
-                                    onChange={(e) => setNewProduct({...newProduct, image_url: e.target.value})}
+                                    onChange={(e) => setNewProduct({ ...newProduct, image_url: e.target.value })}
                                     placeholder="https://m.media-amazon.com/..."
                                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
                                 />
@@ -273,7 +309,7 @@ function Admin() {
                                 </label>
                                 <select
                                     value={updatePrice.product_id}
-                                    onChange={(e) => setUpdatePrice({...updatePrice, product_id: e.target.value})}
+                                    onChange={(e) => setUpdatePrice({ ...updatePrice, product_id: e.target.value })}
                                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
                                     required
                                 >
@@ -294,7 +330,7 @@ function Admin() {
                                     type="number"
                                     step="0.01"
                                     value={updatePrice.new_price}
-                                    onChange={(e) => setUpdatePrice({...updatePrice, new_price: e.target.value})}
+                                    onChange={(e) => setUpdatePrice({ ...updatePrice, new_price: e.target.value })}
                                     placeholder="49.99"
                                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
                                     required
@@ -317,7 +353,7 @@ function Admin() {
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">
                         📦 Productos Actuales ({products.length})
                     </h2>
-                    
+
                     {loading ? (
                         <p className="text-gray-600">Cargando productos...</p>
                     ) : products.length === 0 ? (
@@ -330,6 +366,7 @@ function Admin() {
                                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">ASIN</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Título</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Marca</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Marketplace</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Precio</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Rating</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Reviews</th>
@@ -346,6 +383,7 @@ function Admin() {
                                                 {product.title}
                                             </td>
                                             <td className="px-4 py-3 text-sm text-gray-900">{product.brand}</td>
+                                            <td className="px-4 py-3 text-sm text-gray-900 capitalize">{product.marketplace}</td>
                                             <td className="px-4 py-3 text-sm font-bold text-green-600">
                                                 {product.current_price}€
                                             </td>
@@ -354,11 +392,10 @@ function Admin() {
                                             </td>
                                             <td className="px-4 py-3 text-sm text-gray-900">{product.review_count}</td>
                                             <td className="px-4 py-3 text-sm">
-                                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                                                    product.stock_status === 'in_stock' 
-                                                        ? 'bg-green-100 text-green-800' 
+                                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${product.stock_status === 'in_stock'
+                                                        ? 'bg-green-100 text-green-800'
                                                         : 'bg-red-100 text-red-800'
-                                                }`}>
+                                                    }`}>
                                                     {product.stock_status === 'in_stock' ? 'En stock' : 'Sin stock'}
                                                 </span>
                                             </td>
