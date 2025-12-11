@@ -14,6 +14,10 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 CORS(app)
 
+from routes.products import products_bp
+
+app.register_blueprint(products_bp, url_prefix='/api')
+
 # ===================================
 # CONEXIONES A BASES DE DATOS
 # ===================================

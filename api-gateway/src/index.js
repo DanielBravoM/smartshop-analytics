@@ -7,9 +7,11 @@ const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const axios = require('axios');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 
 // ===================================
 // MIDDLEWARE
@@ -88,6 +90,19 @@ app.use('/api/v1/products', async (req, res) => {
   }
 });
 
+// Proxy para comparador de productos (Data Ingestion)
+app.use('/api/comparator', createProxyMiddleware({
+  target: 'http://data-ingestion:5000',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/comparator': '/api/comparator'
+  },
+  onError: (err, req, res) => {
+    console.error('Proxy error:', err);
+    res.status(500).json({ error: 'Proxy error', details: err.message });
+  }
+}));
+
 // Proxy para Analytics Service (Node.js)
 app.use('/api/v1/analytics', async (req, res) => {
   try {
@@ -123,6 +138,7 @@ app.use('/api/v1/alerts', async (req, res) => {
     });
   }
 });
+
 
 // ========================================
 // RUTAS DE AUTENTICACIÓN
