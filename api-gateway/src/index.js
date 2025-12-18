@@ -308,6 +308,41 @@ app.delete('/api/v1/admin/products/:id', async (req, res) => {
     }
 });
 
+// Ruta para comparador
+app.get('/api/v1/products/compare', async (req, res) => {
+  try {
+    const token = req.headers.authorization;
+    const response = await axios.get(`${NODE_SERVICE_URL}/products/compare`, {
+      params: req.query,
+      headers: { Authorization: token }
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error en comparador:', error.message);
+    res.status(error.response?.status || 500).json({
+      success: false,
+      error: 'Error al comparar productos'
+    });
+  }
+});
+
+// Ruta para reportes
+app.get('/api/v1/reports/:type', async (req, res) => {
+  try {
+    const token = req.headers.authorization;
+    const response = await axios.get(`${NODE_SERVICE_URL}/reports/${req.params.type}`, {
+      headers: { Authorization: token }
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error en reportes:', error.message);
+    res.status(error.response?.status || 500).json({
+      success: false,
+      error: 'Error al generar reporte'
+    });
+  }
+});
+
 // ===================================
 // DOCUMENTACIÓN SWAGGER
 // ===================================
@@ -350,7 +385,6 @@ app.use((err, req, res, next) => {
 // ===================================
 // INICIAR SERVIDOR
 // ===================================
-
 app.listen(PORT, () => {
   console.log('='.repeat(50));
   console.log(`🚀 API Gateway iniciado en puerto ${PORT}`);

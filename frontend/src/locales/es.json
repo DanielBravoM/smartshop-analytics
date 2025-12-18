@@ -127,7 +127,16 @@
       "error": "Error",
       "success": "Éxito",
       "warning": "Advertencia",
-      "info": "Información"
+      "info": "Información",
+      "metric": "Métrica",
+      "value": "Valor",
+      "quantity": "Cantidad",
+      "date": "Fecha",
+      "image": "Imagen",
+      "brand": "Marca",
+      "category": "Categoría",
+      "action": "Acción",
+      "select": "Seleccionar"
     },
     "alerts": {
       "title": "Alertas de Precio",
@@ -149,7 +158,10 @@
       "delete": "Eliminar",
       "save": "Guardar Alerta",
       "noAlerts": "No tienes alertas configuradas",
-      "createFirst": "Crea tu primera alerta para recibir notificaciones automáticas"
+      "createFirst": "Crea tu primera alerta para recibir notificaciones automáticas",
+      "confirmDelete": "¿Eliminar esta alerta?",
+      "selectProduct": "Por favor selecciona un producto",
+      "enterThreshold": "Por favor ingresa un precio umbral"
     },
     "reports": {
       "title": "Informes y Análisis",
@@ -157,6 +169,23 @@
       "generateReport": "Generar Informe",
       "downloadPDF": "Descargar PDF",
       "downloadCSV": "Descargar CSV",
+      "reportGenerated": "Reporte generado",
+      "reportTypeLabel": "Tipo",
+      "productsByMarketplace": "Productos por Marketplace",
+      "productsByCategory": "Productos por Categoría",
+      "estimatedSalesAnalysis": "Análisis de Ventas Estimadas",
+      "top10Products": "Top 10 Productos por Precio",
+      "product": "Producto",
+      "asin": "ASIN",
+      "estimatedSales": "Ventas Est.",
+      "estimatedRevenue": "Ingresos Est.",
+      "marketplace": "Marketplace",
+      "selectReportType": "Selecciona un tipo de reporte para comenzar",
+      "noDataToExport": "No hay datos para exportar",
+      "noPriceHistory": "No hay datos de historial de precios",
+      "noSalesData": "No hay datos de análisis de ventas",
+      "noComparisonData": "No hay datos de comparación",
+      "unsupportedType": "Tipo de reporte no soportado para exportación",
       "dateRange": "Rango de Fechas",
       "from": "Desde",
       "to": "Hasta",
@@ -172,7 +201,10 @@
         "avgPrice": "Precio Promedio",
         "maxPrice": "Precio Máximo",
         "minPrice": "Precio Mínimo",
-        "priceChange": "Cambio de Precio"
+        "priceChange": "Cambio de Precio",
+        "avgRating": "Rating Promedio",
+        "totalProducts": "Total Productos",
+        "totalReviews": "Total Reviews"
       },
       "noData": "No hay datos para el período seleccionado"
     },
@@ -192,7 +224,14 @@
       "marketplace": "Marketplace",
       "lastUpdate": "Última Actualización",
       "noProducts": "No hay productos para comparar",
-      "addFirst": "Añade productos para comenzar la comparación"
+      "addFirst": "Añade productos para comenzar la comparación",
+      "results": "Resultados",
+      "viewProduct": "Ver producto",
+      "bestValue": "Mejor valor",
+      "bestValueDesc": "Precio más bajo, rating más alto, o más reviews",
+      "maxProducts": "Máximo 4 productos para comparar",
+      "alreadyAdded": "Este producto ya está en la comparación",
+      "confirmClear": "¿Limpiar toda la comparación?"
     }
   }
 }

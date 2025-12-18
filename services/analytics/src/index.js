@@ -262,152 +262,6 @@ app.get('/analytics', authenticateToken, async (req, res) => {
   }
 });
 
-// ===================================
-// ALERTAS
-// ===================================
-
-app.get('/alerts', async (req, res) => {
-  try {
-    const { user_id, active } = req.query;
-
-    let query = 'SELECT * FROM alerts';
-    const params = [];
-
-    if (user_id) {
-      query += ' WHERE user_id = $1';
-      params.push(user_id);
-
-      if (active !== undefined) {
-        query += ' AND active = $2';
-        params.push(active === 'true');
-      }
-    } else if (active !== undefined) {
-      query += ' WHERE active = $1';
-      params.push(active === 'true');
-    }
-
-    query += ' ORDER BY created_at DESC';
-
-    const result = await pgPool.query(query, params);
-
-    res.json({
-      success: true,
-      count: result.rows.length,
-      alerts: result.rows
-    });
-  } catch (error) {
-    console.error('Error obteniendo alertas:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.post('/alerts', async (req, res) => {
-  try {
-    const { user_id, product_id, alert_type, threshold_value } = req.body;
-
-    if (!user_id || !alert_type) {
-      return res.status(400).json({
-        error: 'user_id y alert_type son requeridos'
-      });
-    }
-
-    const query = `
-      INSERT INTO alerts (user_id, product_id, alert_type, threshold_value, active)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING *
-    `;
-
-    const result = await pgPool.query(query, [
-      user_id,
-      product_id || null,
-      alert_type,
-      threshold_value || null,
-      true
-    ]);
-
-    res.status(201).json({
-      success: true,
-      message: 'Alerta creada exitosamente',
-      alert: result.rows[0]
-    });
-  } catch (error) {
-    console.error('Error creando alerta:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.put('/alerts/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { active, threshold_value } = req.body;
-
-    const updates = [];
-    const params = [];
-    let paramCount = 1;
-
-    if (active !== undefined) {
-      updates.push(`active = $${paramCount++}`);
-      params.push(active);
-    }
-
-    if (threshold_value !== undefined) {
-      updates.push(`threshold_value = $${paramCount++}`);
-      params.push(threshold_value);
-    }
-
-    if (updates.length === 0) {
-      return res.status(400).json({ error: 'No hay campos para actualizar' });
-    }
-
-    params.push(id);
-    const query = `
-      UPDATE alerts 
-      SET ${updates.join(', ')}
-      WHERE id = $${paramCount}
-      RETURNING *
-    `;
-
-    const result = await pgPool.query(query, params);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Alerta no encontrada' });
-    }
-
-    res.json({
-      success: true,
-      message: 'Alerta actualizada',
-      alert: result.rows[0]
-    });
-  } catch (error) {
-    console.error('Error actualizando alerta:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.delete('/alerts/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const result = await pgPool.query(
-      'DELETE FROM alerts WHERE id = $1 RETURNING *',
-      [id]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Alerta no encontrada' });
-    }
-
-    res.json({
-      success: true,
-      message: 'Alerta eliminada',
-      alert: result.rows[0]
-    });
-  } catch (error) {
-    console.error('Error eliminando alerta:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Rutas de autenticación (AÑADIR ANTES DE LAS RUTAS ADMIN)
 app.use('/auth', require('./routes/auth'));
 
@@ -522,6 +376,368 @@ app.use('/user-products', authenticateToken, require('./routes/user-products'));
 app.use('/admin', require('./routes/admin'));
 
 // ===================================
+// INICIAR SERVIDOR
+// ===================================
+// Endpoint para obtener productos comparables
+app.get('/products/compare', authenticateToken, async (req, res) => {
+  try {
+    const { product_ids } = req.query; // Recibe IDs separados por comas
+    
+    if (!product_ids) {
+      return res.json({ success: true, products: [] });
+    }
+
+    const ids = product_ids.split(',');
+    
+    const products = await Product.find({
+      external_id: { $in: ids }
+    });
+
+    res.json({
+      success: true,
+      products: products
+    });
+  } catch (error) {
+    console.error('Error fetching products for comparison:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Error al obtener productos para comparar' 
+    });
+  }
+});
+
+// Endpoint de reportes
+app.get('/reports/:type', authenticateToken, async (req, res) => {
+  try {
+    const { type } = req.params;
+    const userId = req.user.id;
+
+    // Obtener productos seguidos por el usuario
+    const followedResult = await pgPool.query(
+      'SELECT product_external_id FROM user_products WHERE user_id = $1',
+      [userId]
+    );
+    const followedProductIds = followedResult.rows.map(row => row.product_external_id);
+
+    if (followedProductIds.length === 0) {
+      return res.json({
+        success: true,
+        report: {
+          type,
+          data: {},
+          message: 'No products followed'
+        }
+      });
+    }
+
+    let reportData = {};
+
+    switch (type) {
+      case 'price_history':
+        // Historial de precios de los últimos 30 días
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const priceHistory = await mongoDb.collection('price_history').aggregate([
+          {
+            $match: {
+              product_id: { $in: followedProductIds },
+              timestamp: { $gte: thirtyDaysAgo }
+            }
+          },
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'product_id',
+              foreignField: 'external_id',
+              as: 'product'
+            }
+          },
+          { $unwind: '$product' },
+          {
+            $group: {
+              _id: {
+                product: '$product_id',
+                date: { $dateToString: { format: '%Y-%m-%d', date: '$timestamp' } }
+              },
+              title: { $first: '$product.title' },
+              avgPrice: { $avg: '$price' },
+              minPrice: { $min: '$price' },
+              maxPrice: { $max: '$price' }
+            }
+          },
+          { $sort: { '_id.date': 1 } }
+        ]).toArray();
+
+        reportData = { priceHistory };
+        break;
+
+      case 'sales_analysis':
+        // Análisis de ventas estimadas
+        const products = await mongoDb.collection('products').find({
+          external_id: { $in: followedProductIds }
+        }).toArray();
+
+        const salesAnalysis = products.map(product => ({
+          title: product.title,
+          external_id: product.external_id,
+          estimatedSales: Math.floor((product.review_count || 0) * 2.5),
+          price: product.current_price || 0,
+          revenue: Math.floor((product.review_count || 0) * 2.5 * (product.current_price || 0)),
+          rating: product.rating || 0,
+          marketplace: product.marketplace
+        }));
+
+        reportData = { salesAnalysis };
+        break;
+
+      case 'summary':
+        // Resumen general
+        const summaryProducts = await mongoDb.collection('products').find({
+          external_id: { $in: followedProductIds }
+        }).toArray();
+
+        const prices = summaryProducts.map(p => p.current_price).filter(p => p);
+        const ratings = summaryProducts.map(p => p.rating).filter(r => r);
+
+        reportData = {
+          totalProducts: summaryProducts.length,
+          avgPrice: prices.length > 0 ? (prices.reduce((a, b) => a + b, 0) / prices.length).toFixed(2) : 0,
+          maxPrice: prices.length > 0 ? Math.max(...prices).toFixed(2) : 0,
+          minPrice: prices.length > 0 ? Math.min(...prices).toFixed(2) : 0,
+          avgRating: ratings.length > 0 ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(2) : 0,
+          totalReviews: summaryProducts.reduce((sum, p) => sum + (p.review_count || 0), 0),
+          byMarketplace: summaryProducts.reduce((acc, p) => {
+            acc[p.marketplace] = (acc[p.marketplace] || 0) + 1;
+            return acc;
+          }, {}),
+          byCategory: summaryProducts.reduce((acc, p) => {
+            acc[p.category] = (acc[p.category] || 0) + 1;
+            return acc;
+          }, {})
+        };
+        break;
+
+      case 'comparison':
+        // Comparación de productos
+        const compProducts = await mongoDb.collection('products')
+          .find({ external_id: { $in: followedProductIds } })
+          .sort({ current_price: -1 })
+          .limit(10)
+          .toArray();
+
+        reportData = {
+          products: compProducts.map(p => ({
+            title: p.title,
+            price: p.current_price || 0,
+            rating: p.rating || 0,
+            reviews: p.review_count || 0,
+            marketplace: p.marketplace
+          }))
+        };
+        break;
+
+      default:
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid report type'
+        });
+    }
+
+    res.json({
+      success: true,
+      report: {
+        type,
+        data: reportData,
+        generatedAt: new Date()
+      }
+    });
+  } catch (error) {
+    console.error('Error generating report:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error al generar el reporte'
+    });
+  }
+});
+
+// ===================================
+// ENDPOINTS DE ALERTAS
+// ===================================
+
+// Crear alerta
+app.post('/alerts', authenticateToken, async (req, res) => {
+  try {
+    console.log('=== CREATE ALERT ===');
+    console.log('User ID:', req.user.id);
+    console.log('Body:', req.body);
+    
+    const userId = req.user.id;
+    const { product_external_id, alert_type, threshold_price } = req.body;
+
+    console.log('Parsed data:', { userId, product_external_id, alert_type, threshold_price });
+
+    // Validar que el usuario sigue el producto
+    const followCheck = await pgPool.query(
+      'SELECT * FROM user_products WHERE user_id = $1 AND product_external_id = $2',
+      [userId, product_external_id]
+    );
+
+    console.log('Follow check result:', followCheck.rows);
+
+    if (followCheck.rows.length === 0) {
+      console.log('ERROR: Usuario no sigue el producto');
+      return res.status(400).json({
+        success: false,
+        error: 'Debes seguir el producto para crear una alerta'
+      });
+    }
+
+    // Crear alerta
+    console.log('Inserting alert...');
+    const result = await pgPool.query(
+      `INSERT INTO alerts (user_id, product_external_id, alert_type, threshold_price, is_active)
+       VALUES ($1, $2, $3, $4, true)
+       RETURNING *`,
+      [userId, product_external_id, alert_type, threshold_price]
+    );
+
+    console.log('Alert created:', result.rows[0]);
+
+    res.json({
+      success: true,
+      alert: result.rows[0]
+    });
+  } catch (error) {
+    console.error('ERROR creating alert:', error);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({
+      success: false,
+      error: 'Error al crear la alerta',
+      details: error.message
+    });
+  }
+});
+
+// Listar alertas del usuario
+app.get('/alerts', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await pgPool.query(
+      `SELECT a.*, p.title as product_title, p.current_price, p.marketplace
+       FROM alerts a
+       JOIN user_products up ON a.product_external_id = up.product_external_id AND up.user_id = $1
+       LEFT JOIN (
+         SELECT DISTINCT ON (external_id) external_id, title, current_price, marketplace
+         FROM products
+       ) p ON a.product_external_id = p.external_id
+       WHERE a.user_id = $1
+       ORDER BY a.created_at DESC`,
+      [userId]
+    );
+
+    res.json({
+      success: true,
+      alerts: result.rows
+    });
+  } catch (error) {
+    console.error('Error fetching alerts:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error al obtener alertas'
+    });
+  }
+});
+
+// Actualizar alerta (activar/desactivar o cambiar umbral)
+app.put('/alerts/:alertId', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { alertId } = req.params;
+    const { is_active, threshold_price } = req.body;
+
+    // Verificar que la alerta pertenece al usuario
+    const checkResult = await pgPool.query(
+      'SELECT * FROM alerts WHERE id = $1 AND user_id = $2',
+      [alertId, userId]
+    );
+
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Alerta no encontrada'
+      });
+    }
+
+    // Actualizar
+    const updates = [];
+    const values = [];
+    let paramCount = 1;
+
+    if (is_active !== undefined) {
+      updates.push(`is_active = $${paramCount++}`);
+      values.push(is_active);
+    }
+
+    if (threshold_price !== undefined) {
+      updates.push(`threshold_price = $${paramCount++}`);
+      values.push(threshold_price);
+    }
+
+    values.push(alertId);
+    values.push(userId);
+
+    const result = await pgPool.query(
+      `UPDATE alerts SET ${updates.join(', ')} WHERE id = $${paramCount} AND user_id = $${paramCount + 1} RETURNING *`,
+      values
+    );
+
+    res.json({
+      success: true,
+      alert: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error updating alert:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error al actualizar alerta'
+    });
+  }
+});
+
+// Eliminar alerta
+app.delete('/alerts/:alertId', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { alertId } = req.params;
+
+    const result = await pgPool.query(
+      'DELETE FROM alerts WHERE id = $1 AND user_id = $2 RETURNING *',
+      [alertId, userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Alerta no encontrada'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Alerta eliminada correctamente'
+    });
+  } catch (error) {
+    console.error('Error deleting alert:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error al eliminar alerta'
+    });
+  }
+});
+
+// ===================================
 // MANEJO DE ERRORES
 // ===================================
 
@@ -537,7 +753,6 @@ app.use((err, req, res, next) => {
 // ===================================
 // INICIAR SERVIDOR
 // ===================================
-
 app.listen(config.PORT, () => {
   console.log('='.repeat(50));
   console.log(`📊 Analytics Service iniciado en puerto ${config.PORT}`);

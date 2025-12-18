@@ -127,7 +127,16 @@
       "error": "Errorea",
       "success": "Arrakasta",
       "warning": "Abisua",
-      "info": "Informazioa"
+      "info": "Informazioa",
+      "metric": "Metrika",
+      "value": "Balioa",
+      "quantity": "Kantitatea",
+      "date": "Data",
+      "image": "Irudia",
+      "brand": "Marka",
+      "category": "Kategoria",
+      "action": "Ekintza",
+      "select": "Hautatu"
     },
     "alerts": {
       "title": "Prezio Alertak",
@@ -149,32 +158,10 @@
       "delete": "Ezabatu",
       "save": "Alerta Gorde",
       "noAlerts": "Ez duzu alertarik konfiguratuta",
-      "createFirst": "Sortu zure lehen alerta jakinarazpen automatikoak jasotzeko"
-    },
-    "reports": {
-      "title": "Txostenak eta Analisiak",
-      "description": "Aztertu zure jarraitzen dituzun produktuen errendimendua",
-      "generateReport": "Txostena Sortu",
-      "downloadPDF": "PDF Deskargatu",
-      "downloadCSV": "CSV Deskargatu",
-      "dateRange": "Data Tartea",
-      "from": "Hasiera",
-      "to": "Amaiera",
-      "reportType": "Txosten Mota",
-      "types": {
-        "price_history": "Prezioen Historia",
-        "sales_analysis": "Salmenten Analisia",
-        "comparison": "Produktuen Konparaketa",
-        "summary": "Laburpen Orokorra"
-      },
-      "summary": {
-        "title": "Aldiaren Laburpena",
-        "avgPrice": "Batez Besteko Prezioa",
-        "maxPrice": "Gehienezko Prezioa",
-        "minPrice": "Gutxieneko Prezioa",
-        "priceChange": "Prezio Aldaketa"
-      },
-      "noData": "Ez dago daturik hautatutako aldirako"
+      "createFirst": "Sortu zure lehen alerta jakinarazpen automatikoak jasotzeko",
+      "confirmDelete": "Alerta hau ezabatu?",
+      "selectProduct": "Mesedez hautatu produktu bat",
+      "enterThreshold": "Mesedez sartu prezio muga bat"
     },
     "comparator": {
       "title": "Produktu Konparatzailea",
@@ -192,7 +179,59 @@
       "marketplace": "Merkatu-lekua",
       "lastUpdate": "Azken Eguneraketa",
       "noProducts": "Ez dago produkturik konparatzeko",
-      "addFirst": "Gehitu produktuak konparaketa hasteko"
+      "addFirst": "Gehitu produktuak konparaketa hasteko",
+      "results": "Emaitzak",
+      "viewProduct": "Produktua ikusi",
+      "bestValue": "Balio onena",
+      "bestValueDesc": "Preziorik baxuena, baloraziorik altuena edo iritzi gehien",
+      "maxProducts": "Gehienez 4 produktu konparatzeko",
+      "alreadyAdded": "Produktu hau dagoeneko konparaketan dago",
+      "confirmClear": "Konparaketa guztia garbitu?"
+    },
+    "reports": {
+      "title": "Txostenak eta Analisiak",
+      "description": "Aztertu zure jarraitzen dituzun produktuen errendimendua",
+      "generateReport": "Txostena Sortu",
+      "downloadPDF": "PDF Deskargatu",
+      "downloadCSV": "CSV Deskargatu",
+      "reportGenerated": "Txostena sortuta",
+      "reportTypeLabel": "Mota",
+      "productsByMarketplace": "Produktuak Merkatu-lekuaren arabera",
+      "productsByCategory": "Produktuak Kategoriaren arabera",
+      "estimatedSalesAnalysis": "Salmenta Estimatuen Analisia",
+      "top10Products": "Top 10 Produktuak Prezioaren arabera",
+      "product": "Produktua",
+      "asin": "ASIN",
+      "estimatedSales": "Salmenta Est.",
+      "estimatedRevenue": "Sarrera Est.",
+      "marketplace": "Merkatu-lekua",
+      "selectReportType": "Hautatu txosten mota hasteko",
+      "noDataToExport": "Ez dago daturik esportatzeko",
+      "noPriceHistory": "Ez dago prezioen historiako daturik",
+      "noSalesData": "Ez dago salmenten analisirako daturik",
+      "noComparisonData": "Ez dago konparaketa daturik",
+      "unsupportedType": "Txosten mota hau ez da onartzen esportatzeko",
+      "dateRange": "Data Tartea",
+      "from": "Hasiera",
+      "to": "Amaiera",
+      "reportType": "Txosten Mota",
+      "types": {
+        "price_history": "Prezioen Historia",
+        "sales_analysis": "Salmenten Analisia",
+        "comparison": "Produktuen Konparaketa",
+        "summary": "Laburpen Orokorra"
+      },
+      "summary": {
+        "title": "Aldiaren Laburpena",
+        "avgPrice": "Batez Besteko Prezioa",
+        "maxPrice": "Gehienezko Prezioa",
+        "minPrice": "Gutxieneko Prezioa",
+        "priceChange": "Prezio Aldaketa",
+        "avgRating": "Batez Besteko Balorazioa",
+        "totalProducts": "Produktu Guztira",
+        "totalReviews": "Iritzi Guztira"
+      },
+      "noData": "Ez dago daturik hautatutako aldirako"
     }
   }
 }

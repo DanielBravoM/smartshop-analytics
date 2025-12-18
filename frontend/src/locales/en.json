@@ -127,7 +127,16 @@
       "error": "Error",
       "success": "Success",
       "warning": "Warning",
-      "info": "Information"
+      "info": "Information",
+      "metric": "Metric",
+      "value": "Value",
+      "quantity": "Quantity",
+      "date": "Date",
+      "image": "Image",
+      "brand": "Brand",
+      "category": "Category",
+      "action": "Action",
+      "select": "Select"
     },
     "alerts": {
       "title": "Price Alerts",
@@ -142,39 +151,17 @@
         "price_drop": "Price Drop",
         "price_increase": "Price Increase",
         "stock_available": "Stock Available",
-        "stock_out": "Out of Stock"
+        "stock_out": "Out of Stock",
+        "selectProduct": "Please select a product",
+        "enterThreshold": "Please enter a price threshold"
       },
       "active": "Active",
       "inactive": "Inactive",
       "delete": "Delete",
       "save": "Save Alert",
       "noAlerts": "You don't have any configured alerts",
-      "createFirst": "Create your first alert to receive automatic notifications"
-    },
-    "reports": {
-      "title": "Reports and Analysis",
-      "description": "Analyze the performance of your followed products",
-      "generateReport": "Generate Report",
-      "downloadPDF": "Download PDF",
-      "downloadCSV": "Download CSV",
-      "dateRange": "Date Range",
-      "from": "From",
-      "to": "To",
-      "reportType": "Report Type",
-      "types": {
-        "price_history": "Price History",
-        "sales_analysis": "Sales Analysis",
-        "comparison": "Product Comparison",
-        "summary": "General Summary"
-      },
-      "summary": {
-        "title": "Period Summary",
-        "avgPrice": "Average Price",
-        "maxPrice": "Maximum Price",
-        "minPrice": "Minimum Price",
-        "priceChange": "Price Change"
-      },
-      "noData": "No data available for the selected period"
+      "createFirst": "Create your first alert to receive automatic notifications",
+      "confirmDelete": "Delete this alert?"
     },
     "comparator": {
       "title": "Product Comparator",
@@ -192,7 +179,59 @@
       "marketplace": "Marketplace",
       "lastUpdate": "Last Update",
       "noProducts": "No products to compare",
-      "addFirst": "Add products to start comparing"
+      "addFirst": "Add products to start comparing",
+      "results": "Results",
+      "viewProduct": "View product",
+      "bestValue": "Best value",
+      "bestValueDesc": "Lowest price, highest rating, or most reviews",
+      "maxProducts": "Maximum 4 products to compare",
+      "alreadyAdded": "This product is already in the comparison",
+      "confirmClear": "Clear all comparison?"
+    },
+    "reports": {
+      "title": "Reports and Analysis",
+      "description": "Analyze the performance of your followed products",
+      "generateReport": "Generate Report",
+      "downloadPDF": "Download PDF",
+      "downloadCSV": "Download CSV",
+      "reportGenerated": "Report generated",
+      "reportTypeLabel": "Type",
+      "productsByMarketplace": "Products by Marketplace",
+      "productsByCategory": "Products by Category",
+      "estimatedSalesAnalysis": "Estimated Sales Analysis",
+      "top10Products": "Top 10 Products by Price",
+      "product": "Product",
+      "asin": "ASIN",
+      "estimatedSales": "Est. Sales",
+      "estimatedRevenue": "Est. Revenue",
+      "marketplace": "Marketplace",
+      "selectReportType": "Select a report type to begin",
+      "noDataToExport": "No data to export",
+      "noPriceHistory": "No price history data available",
+      "noSalesData": "No sales analysis data available",
+      "noComparisonData": "No comparison data available",
+      "unsupportedType": "Report type not supported for export",
+      "dateRange": "Date Range",
+      "from": "From",
+      "to": "To",
+      "reportType": "Report Type",
+      "types": {
+        "price_history": "Price History",
+        "sales_analysis": "Sales Analysis",
+        "comparison": "Product Comparison",
+        "summary": "General Summary"
+      },
+      "summary": {
+        "title": "Period Summary",
+        "avgPrice": "Average Price",
+        "maxPrice": "Maximum Price",
+        "minPrice": "Minimum Price",
+        "priceChange": "Price Change",
+        "avgRating": "Average Rating",
+        "totalProducts": "Total Products",
+        "totalReviews": "Total Reviews"
+      },
+      "noData": "No data available for the selected period"
     }
   }
 }
