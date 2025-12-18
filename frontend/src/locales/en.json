@@ -5,6 +5,7 @@
       "products": "Products",
       "alerts": "Alerts",
       "reports": "Reports",
+      "comparator": "Comparator",
       "admin": "Admin",
       "logout": "Logout"
     },
@@ -127,6 +128,71 @@
       "success": "Success",
       "warning": "Warning",
       "info": "Information"
+    },
+    "alerts": {
+      "title": "Price Alerts",
+      "description": "Get notifications when your followed products change in price or stock",
+      "createAlert": "Create New Alert",
+      "myAlerts": "My Alerts",
+      "productLabel": "Product",
+      "typeLabel": "Alert Type",
+      "thresholdLabel": "Price Threshold (€)",
+      "activeLabel": "Active",
+      "types": {
+        "price_drop": "Price Drop",
+        "price_increase": "Price Increase",
+        "stock_available": "Stock Available",
+        "stock_out": "Out of Stock"
+      },
+      "active": "Active",
+      "inactive": "Inactive",
+      "delete": "Delete",
+      "save": "Save Alert",
+      "noAlerts": "You don't have any configured alerts",
+      "createFirst": "Create your first alert to receive automatic notifications"
+    },
+    "reports": {
+      "title": "Reports and Analysis",
+      "description": "Analyze the performance of your followed products",
+      "generateReport": "Generate Report",
+      "downloadPDF": "Download PDF",
+      "downloadCSV": "Download CSV",
+      "dateRange": "Date Range",
+      "from": "From",
+      "to": "To",
+      "reportType": "Report Type",
+      "types": {
+        "price_history": "Price History",
+        "sales_analysis": "Sales Analysis",
+        "comparison": "Product Comparison",
+        "summary": "General Summary"
+      },
+      "summary": {
+        "title": "Period Summary",
+        "avgPrice": "Average Price",
+        "maxPrice": "Maximum Price",
+        "minPrice": "Minimum Price",
+        "priceChange": "Price Change"
+      },
+      "noData": "No data available for the selected period"
+    },
+    "comparator": {
+      "title": "Product Comparator",
+      "description": "Compare products from different marketplaces",
+      "searchPlaceholder": "Search product by name or ASIN...",
+      "compare": "Compare",
+      "addProduct": "Add Product",
+      "clearAll": "Clear All",
+      "selectProducts": "Select at least 2 products to compare",
+      "characteristics": "Characteristics",
+      "price": "Price",
+      "rating": "Rating",
+      "reviews": "Reviews",
+      "stock": "Stock",
+      "marketplace": "Marketplace",
+      "lastUpdate": "Last Update",
+      "noProducts": "No products to compare",
+      "addFirst": "Add products to start comparing"
     }
   }
 }

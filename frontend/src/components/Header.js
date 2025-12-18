@@ -2,12 +2,14 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Package, BarChart3, FileText, Bell, LogOut, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import LanguageSelector from './LanguageSelector';
 
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout, isAdmin } = useAuth();
+  const { t } = useTranslation();
 
   const isActive = (path) => location.pathname === path;
 
@@ -30,70 +32,76 @@ function Header() {
           <nav className="hidden md:flex gap-2 items-center">
             <Link
               to="/"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${isActive('/')
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                isActive('/')
                   ? 'bg-white text-purple-600 font-semibold'
                   : 'hover:bg-purple-700'
-                }`}
+              }`}
             >
               <Home size={18} />
-              <span>Dashboard</span>
+              <span>{t('nav.dashboard')}</span>
             </Link>
 
             <Link
               to="/products"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${isActive('/products')
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                isActive('/products')
                   ? 'bg-white text-purple-600 font-semibold'
                   : 'hover:bg-purple-700'
-                }`}
+              }`}
             >
               <Package size={18} />
-              <span>Productos</span>
+              <span>{t('nav.products')}</span>
             </Link>
 
             <Link
               to="/comparator"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${isActive('/comparator')
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                isActive('/comparator')
                   ? 'bg-white text-purple-600 font-semibold'
                   : 'hover:bg-purple-700'
-                }`}
+              }`}
             >
               <BarChart3 size={18} />
-              <span>Comparador</span>
+              <span>{t('nav.comparator')}</span>
             </Link>
 
             <Link
               to="/reports"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${isActive('/reports')
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                isActive('/reports')
                   ? 'bg-white text-purple-600 font-semibold'
                   : 'hover:bg-purple-700'
-                }`}
+              }`}
             >
               <FileText size={18} />
-              <span>Reportes</span>
+              <span>{t('nav.reports')}</span>
             </Link>
 
             <Link
               to="/alerts"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${isActive('/alerts')
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                isActive('/alerts')
                   ? 'bg-white text-purple-600 font-semibold'
                   : 'hover:bg-purple-700'
-                }`}
+              }`}
             >
               <Bell size={18} />
-              <span>Alertas</span>
+              <span>{t('nav.alerts')}</span>
             </Link>
 
             {/* Mostrar Admin solo si es admin */}
             {isAdmin() && (
               <Link
                 to="/admin"
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${isActive('/admin')
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                  isActive('/admin')
                     ? 'bg-white text-purple-600 font-semibold'
                     : 'hover:bg-purple-700'
-                  }`}
+                }`}
               >
                 <span>🛠️</span>
-                <span>Admin</span>
+                <span>{t('nav.admin')}</span>
               </Link>
             )}
 
@@ -111,24 +119,8 @@ function Header() {
               )}
             </div>
 
-            <nav className="bg-white shadow-lg">
-              <div className="container mx-auto px-4">
-                <div className="flex justify-between items-center h-16">
-                  {/* Logo y navegación */}
-                  <div className="flex items-center space-x-8">
-                    {/* ... links ... */}
-                  </div>
-
-                  {/* Selector de idioma y logout */}
-                  <div className="flex items-center gap-4">
-                    <LanguageSelector />  {/* ← AÑADIR AQUÍ */}
-                    <button onClick={logout}>
-                      Cerrar Sesión
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </nav>
+            {/* Selector de idioma */}
+            <LanguageSelector />
 
             {/* Botón de logout */}
             <button
@@ -136,7 +128,7 @@ function Header() {
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 transition-all"
             >
               <LogOut size={18} />
-              <span>Salir</span>
+              <span>{t('nav.logout')}</span>
             </button>
           </nav>
         </div>

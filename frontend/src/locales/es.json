@@ -4,9 +4,10 @@
       "dashboard": "Dashboard",
       "products": "Productos",
       "alerts": "Alertas",
-      "reports": "Informes",
+      "reports": "Reportes",
+      "comparator": "Comparador",
       "admin": "Admin",
-      "logout": "Cerrar Sesión"
+      "logout": "Salir"
     },
     "auth": {
       "login": "Iniciar Sesión",
@@ -127,6 +128,71 @@
       "success": "Éxito",
       "warning": "Advertencia",
       "info": "Información"
+    },
+    "alerts": {
+      "title": "Alertas de Precio",
+      "description": "Recibe notificaciones cuando los productos que sigues cambien de precio o stock",
+      "createAlert": "Crear Nueva Alerta",
+      "myAlerts": "Mis Alertas",
+      "productLabel": "Producto",
+      "typeLabel": "Tipo de Alerta",
+      "thresholdLabel": "Umbral de Precio (€)",
+      "activeLabel": "Activa",
+      "types": {
+        "price_drop": "Bajada de Precio",
+        "price_increase": "Subida de Precio",
+        "stock_available": "Disponible en Stock",
+        "stock_out": "Sin Stock"
+      },
+      "active": "Activa",
+      "inactive": "Inactiva",
+      "delete": "Eliminar",
+      "save": "Guardar Alerta",
+      "noAlerts": "No tienes alertas configuradas",
+      "createFirst": "Crea tu primera alerta para recibir notificaciones automáticas"
+    },
+    "reports": {
+      "title": "Informes y Análisis",
+      "description": "Analiza el rendimiento de tus productos seguidos",
+      "generateReport": "Generar Informe",
+      "downloadPDF": "Descargar PDF",
+      "downloadCSV": "Descargar CSV",
+      "dateRange": "Rango de Fechas",
+      "from": "Desde",
+      "to": "Hasta",
+      "reportType": "Tipo de Informe",
+      "types": {
+        "price_history": "Historial de Precios",
+        "sales_analysis": "Análisis de Ventas",
+        "comparison": "Comparación de Productos",
+        "summary": "Resumen General"
+      },
+      "summary": {
+        "title": "Resumen del Período",
+        "avgPrice": "Precio Promedio",
+        "maxPrice": "Precio Máximo",
+        "minPrice": "Precio Mínimo",
+        "priceChange": "Cambio de Precio"
+      },
+      "noData": "No hay datos para el período seleccionado"
+    },
+    "comparator": {
+      "title": "Comparador de Productos",
+      "description": "Compara productos de diferentes marketplaces",
+      "searchPlaceholder": "Buscar producto por nombre o ASIN...",
+      "compare": "Comparar",
+      "addProduct": "Añadir Producto",
+      "clearAll": "Limpiar Todo",
+      "selectProducts": "Selecciona al menos 2 productos para comparar",
+      "characteristics": "Características",
+      "price": "Precio",
+      "rating": "Valoración",
+      "reviews": "Reseñas",
+      "stock": "Stock",
+      "marketplace": "Marketplace",
+      "lastUpdate": "Última Actualización",
+      "noProducts": "No hay productos para comparar",
+      "addFirst": "Añade productos para comenzar la comparación"
     }
   }
 }

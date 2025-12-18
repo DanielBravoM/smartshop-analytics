@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, X, Heart } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -11,9 +12,9 @@ function Products() {
   const [showModal, setShowModal] = useState(false);
   const [followedProducts, setFollowedProducts] = useState([]);
   const [followingLoading, setFollowingLoading] = useState({});
+  const { t } = useTranslation();
 
   useEffect(() => {
-    // Delay inicial de 300ms para asegurar que los servicios están listos
     const timer = setTimeout(() => {
       fetchProducts();
       fetchFollowedProducts();
@@ -34,12 +35,11 @@ function Products() {
       console.error(`Error fetching products (intento ${retryCount + 1}/${maxRetries}):`, err);
       
       if (retryCount < maxRetries) {
-        // Reintentar después de 1 segundo
         setTimeout(() => {
           fetchProducts(retryCount + 1);
         }, 1000);
       } else {
-        setError('Error al cargar productos');
+        setError(t('products.error'));
         setLoading(false);
       }
       return;
@@ -111,7 +111,7 @@ function Products() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center min-h-[400px]">
           <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-gray-600">Cargando productos...</p>
+          <p className="text-gray-600">{t('products.loading')}</p>
         </div>
       </div>
     );
@@ -119,14 +119,14 @@ function Products() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8">📦 Productos Disponibles</h2>
+      <h2 className="text-3xl font-bold text-gray-800 mb-8">📦 {t('products.title')}</h2>
 
       {/* Información de productos seguidos */}
       <div className="bg-gradient-to-r from-purple-100 to-indigo-100 rounded-xl p-4 mb-6 border-2 border-purple-200">
         <p className="text-purple-800 font-semibold">
-          ❤️ Sigues <span className="text-2xl font-bold">{followedProducts.length}</span> productos
+          ❤️ {t('products.following')} <span className="text-2xl font-bold">{followedProducts.length}</span> {t('products.productsText')}
         </p>
-        <p className="text-purple-600 text-sm">Los datos del dashboard se calculan solo con tus productos seguidos</p>
+        <p className="text-purple-600 text-sm">{t('products.followingDesc')}</p>
       </div>
 
       {/* Barra de búsqueda */}
@@ -134,7 +134,7 @@ function Products() {
         <Search size={20} className="text-gray-400" />
         <input
           type="text"
-          placeholder="Buscar productos por nombre, marca o marketplace..."
+          placeholder={t('products.search')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="flex-1 outline-none text-gray-700"
@@ -156,14 +156,14 @@ function Products() {
             onClick={fetchProducts}
             className="ml-4 text-red-600 underline hover:text-red-800"
           >
-            Reintentar
+            {t('products.retry')}
           </button>
         </div>
       )}
 
       {/* Contador de productos */}
       <div className="mb-4 text-gray-600">
-        Mostrando {filteredProducts.length} de {products.length} productos
+        {t('products.showing')} {filteredProducts.length} {t('products.of')} {products.length} {t('products.productsText')}
       </div>
 
       {/* Grid de productos */}
@@ -187,7 +187,7 @@ function Products() {
                       ? 'bg-red-500 text-white hover:bg-red-600'
                       : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                   } ${loadingFollow ? 'opacity-50 cursor-wait' : ''}`}
-                  title={following ? 'Dejar de seguir' : 'Seguir producto'}
+                  title={following ? t('products.unfollow') : t('products.follow')}
                 >
                   <Heart
                     size={20}
@@ -230,7 +230,7 @@ function Products() {
                           ? 'bg-green-100 text-green-700'
                           : 'bg-red-100 text-red-700'
                       }`}>
-                        {product.stock_status === 'in_stock' ? '✓ En stock' : '✗ Sin stock'}
+                        {product.stock_status === 'in_stock' ? `✓ ${t('products.inStock')}` : `✗ ${t('products.outOfStock')}`}
                       </span>
                     </div>
 
@@ -240,21 +240,21 @@ function Products() {
                         <span className="text-yellow-500">⭐</span>
                         <span className="font-medium">{product.rating}</span>
                         <span className="text-gray-500">
-                          ({product.review_count?.toLocaleString() || 0} reseñas)
+                          ({product.review_count?.toLocaleString() || 0} {t('products.reviews')})
                         </span>
                       </div>
                     )}
 
                     {/* Última actualización */}
                     <div className="text-xs text-gray-500">
-                      Actualizado: {new Date(product.last_updated).toLocaleDateString('es-ES')}
+                      {t('products.updated')}: {new Date(product.last_updated).toLocaleDateString()}
                     </div>
 
                     {/* Estado de seguimiento */}
                     {following && (
                       <div className="bg-red-50 border border-red-200 rounded-lg p-2 text-center">
                         <span className="text-red-700 text-xs font-semibold">
-                          ❤️ Siguiendo este producto
+                          ❤️ {t('products.followingProduct')}
                         </span>
                       </div>
                     )}
@@ -266,7 +266,7 @@ function Products() {
                       onClick={() => openProductDetail(product)}
                       className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 font-semibold transform hover:scale-105"
                     >
-                      Ver Detalle →
+                      {t('products.viewDetail')} →
                     </button>
                   </div>
                 </div>
@@ -276,10 +276,10 @@ function Products() {
         ) : (
           <div className="col-span-full text-center py-12">
             <div className="text-6xl mb-4">🔍</div>
-            <p className="text-gray-500 text-lg mb-2">No se encontraron productos</p>
+            <p className="text-gray-500 text-lg mb-2">{t('products.noProducts')}</p>
             {searchTerm && (
               <p className="text-gray-400 text-sm">
-                Intenta con otro término de búsqueda
+                {t('products.tryOtherSearch')}
               </p>
             )}
           </div>
@@ -312,7 +312,7 @@ function Products() {
                   {isFollowing(selectedProduct.external_id) && (
                     <span className="px-3 py-1 bg-red-500 rounded-full text-sm font-semibold flex items-center gap-1">
                       <Heart size={14} fill="currentColor" />
-                      Siguiendo
+                      {t('products.followingProduct')}
                     </span>
                   )}
                 </div>
@@ -329,38 +329,38 @@ function Products() {
             <div className="p-6 space-y-6">
               {/* Precio destacado */}
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200">
-                <p className="text-sm text-gray-600 mb-1">Precio actual</p>
+                <p className="text-sm text-gray-600 mb-1">{t('products.currentPrice')}</p>
                 <p className="text-5xl font-bold text-green-600">
-                  {selectedProduct.current_price ? `€${selectedProduct.current_price.toFixed(2)}` : 'No disponible'}
+                  {selectedProduct.current_price ? `€${selectedProduct.current_price.toFixed(2)}` : t('products.urlNotAvailable')}
                 </p>
               </div>
 
               {/* Grid de información */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-500 mb-1">ASIN / ID</p>
+                  <p className="text-sm text-gray-500 mb-1">{t('products.asin')}</p>
                   <p className="font-semibold text-gray-900">{selectedProduct.external_id}</p>
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-500 mb-1">Estado de Stock</p>
+                  <p className="text-sm text-gray-500 mb-1">{t('products.stock')}</p>
                   <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold ${
                     selectedProduct.stock_status === 'in_stock'
                       ? 'bg-green-100 text-green-700'
                       : 'bg-red-100 text-red-700'
                   }`}>
-                    {selectedProduct.stock_status === 'in_stock' ? '✓ En stock' : '✗ Sin stock'}
+                    {selectedProduct.stock_status === 'in_stock' ? `✓ ${t('products.inStock')}` : `✗ ${t('products.outOfStock')}`}
                   </span>
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-500 mb-1">Categoría</p>
+                  <p className="text-sm text-gray-500 mb-1">{t('products.category')}</p>
                   <p className="font-semibold text-gray-900 capitalize">{selectedProduct.category}</p>
                 </div>
 
                 {selectedProduct.rating && (
                   <div className="bg-gray-50 rounded-lg p-4">
-                    <p className="text-sm text-gray-500 mb-1">Valoración</p>
+                    <p className="text-sm text-gray-500 mb-1">{t('products.rating')}</p>
                     <div className="flex items-center gap-2">
                       <span className="text-yellow-500 text-xl">⭐</span>
                       <span className="font-semibold text-gray-900 text-lg">{selectedProduct.rating}</span>
@@ -372,12 +372,9 @@ function Products() {
                 )}
 
                 <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
-                  <p className="text-sm text-gray-500 mb-1">Última actualización</p>
+                  <p className="text-sm text-gray-500 mb-1">{t('products.lastUpdate')}</p>
                   <p className="font-semibold text-gray-900">
-                    {new Date(selectedProduct.last_updated).toLocaleString('es-ES', {
-                      dateStyle: 'full',
-                      timeStyle: 'short'
-                    })}
+                    {new Date(selectedProduct.last_updated).toLocaleString()}
                   </p>
                 </div>
               </div>
@@ -396,17 +393,24 @@ function Products() {
                       : 'bg-green-500 text-white hover:bg-green-600'
                   }`}
                 >
-                  {isFollowing(selectedProduct.external_id) ? '💔 Dejar de seguir' : '❤️ Seguir producto'}
+                  {isFollowing(selectedProduct.external_id) ? `💔 ${t('products.unfollow')}` : `❤️ ${t('products.follow')}`}
                 </button>
-                {selectedProduct.url && (
+                {selectedProduct.url ? (
                   <a
                     href={selectedProduct.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 px-6 rounded-lg hover:from-orange-600 hover:to-orange-700 transition font-semibold text-center"
                   >
-                    🛒 Ver en {selectedProduct.marketplace}
+                    🛒 {t('products.viewOn')} {selectedProduct.marketplace}
                   </a>
+                ) : (
+                  <button
+                    disabled
+                    className="flex-1 bg-gray-300 text-gray-500 py-3 px-6 rounded-lg cursor-not-allowed font-semibold"
+                  >
+                    {t('products.urlNotAvailable')}
+                  </button>
                 )}
               </div>
             </div>

@@ -5,6 +5,7 @@
       "products": "Produktuak",
       "alerts": "Alertak",
       "reports": "Txostenak",
+      "comparator": "Konparatzailea",
       "admin": "Kudeaketa",
       "logout": "Saioa Itxi"
     },
@@ -127,6 +128,71 @@
       "success": "Arrakasta",
       "warning": "Abisua",
       "info": "Informazioa"
+    },
+    "alerts": {
+      "title": "Prezio Alertak",
+      "description": "Jaso jakinarazpenak jarraitzen dituzun produktuen prezioak edo stocka aldatzen direnean",
+      "createAlert": "Alerta Berria Sortu",
+      "myAlerts": "Nire Alertak",
+      "productLabel": "Produktua",
+      "typeLabel": "Alerta Mota",
+      "thresholdLabel": "Prezio Muga (€)",
+      "activeLabel": "Aktibo",
+      "types": {
+        "price_drop": "Prezioa Jaitsi",
+        "price_increase": "Prezioa Igo",
+        "stock_available": "Stockean Eskuragarri",
+        "stock_out": "Stock Gabe"
+      },
+      "active": "Aktibo",
+      "inactive": "Inaktibo",
+      "delete": "Ezabatu",
+      "save": "Alerta Gorde",
+      "noAlerts": "Ez duzu alertarik konfiguratuta",
+      "createFirst": "Sortu zure lehen alerta jakinarazpen automatikoak jasotzeko"
+    },
+    "reports": {
+      "title": "Txostenak eta Analisiak",
+      "description": "Aztertu zure jarraitzen dituzun produktuen errendimendua",
+      "generateReport": "Txostena Sortu",
+      "downloadPDF": "PDF Deskargatu",
+      "downloadCSV": "CSV Deskargatu",
+      "dateRange": "Data Tartea",
+      "from": "Hasiera",
+      "to": "Amaiera",
+      "reportType": "Txosten Mota",
+      "types": {
+        "price_history": "Prezioen Historia",
+        "sales_analysis": "Salmenten Analisia",
+        "comparison": "Produktuen Konparaketa",
+        "summary": "Laburpen Orokorra"
+      },
+      "summary": {
+        "title": "Aldiaren Laburpena",
+        "avgPrice": "Batez Besteko Prezioa",
+        "maxPrice": "Gehienezko Prezioa",
+        "minPrice": "Gutxieneko Prezioa",
+        "priceChange": "Prezio Aldaketa"
+      },
+      "noData": "Ez dago daturik hautatutako aldirako"
+    },
+    "comparator": {
+      "title": "Produktu Konparatzailea",
+      "description": "Konparatu marketplace desberdinen produktuak",
+      "searchPlaceholder": "Bilatu produktua izenez edo ASIN-ez...",
+      "compare": "Konparatu",
+      "addProduct": "Produktua Gehitu",
+      "clearAll": "Garbitu Guztia",
+      "selectProducts": "Hautatu gutxienez 2 produktu konparatzeko",
+      "characteristics": "Ezaugarriak",
+      "price": "Prezioa",
+      "rating": "Balorazioa",
+      "reviews": "Iritziak",
+      "stock": "Stock",
+      "marketplace": "Merkatu-lekua",
+      "lastUpdate": "Azken Eguneraketa",
+      "noProducts": "Ez dago produkturik konparatzeko",
+      "addFirst": "Gehitu produktuak konparaketa hasteko"
     }
   }
 }

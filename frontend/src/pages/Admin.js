@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = 'http://localhost:3000/api/v1';
 
@@ -7,6 +8,7 @@ function Admin() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
+    const { t } = useTranslation();
 
     // Estado del formulario para añadir producto
     const [newProduct, setNewProduct] = useState({
@@ -38,7 +40,7 @@ function Admin() {
             setProducts(response.data.products || []);
         } catch (error) {
             console.error('Error cargando productos:', error);
-            setMessage('❌ Error cargando productos');
+            setMessage(`❌ ${t('admin.loading')}`);
         } finally {
             setLoading(false);
         }
@@ -112,7 +114,7 @@ function Admin() {
     };
 
     const handleDeleteProduct = async (productId) => {
-        if (!window.confirm('¿Estás seguro de eliminar este producto?')) {
+        if (!window.confirm(t('admin.confirmDelete'))) {
             return;
         }
 
@@ -135,7 +137,7 @@ function Admin() {
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="max-w-7xl mx-auto">
-                <h1 className="text-4xl font-bold text-gray-900 mb-8">🛠️ Panel de Administración</h1>
+                <h1 className="text-4xl font-bold text-gray-900 mb-8">🛠️ {t('admin.title')}</h1>
 
                 {/* Mensajes */}
                 {message && (
@@ -149,12 +151,12 @@ function Admin() {
 
                 {/* FORMULARIO: AÑADIR PRODUCTO */}
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-6">➕ Añadir Nuevo Producto</h2>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">➕ {t('admin.addProduct')}</h2>
                     <form onSubmit={handleAddProduct}>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    ASIN / ID Producto *
+                                    {t('admin.asinLabel')} *
                                 </label>
                                 <input
                                     type="text"
@@ -168,7 +170,7 @@ function Admin() {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Título del Producto *
+                                    {t('admin.titleLabel')} *
                                 </label>
                                 <input
                                     type="text"
@@ -182,7 +184,7 @@ function Admin() {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Marca
+                                    {t('admin.brandLabel')}
                                 </label>
                                 <input
                                     type="text"
@@ -195,28 +197,31 @@ function Admin() {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Categoría
+                                    {t('admin.categoryLabel')}
                                 </label>
                                 <select
                                     value={newProduct.category}
                                     onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
                                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
                                 >
-                                    <option value="electronics">📱 Electrónica</option>
-                                    <option value="fashion">👕 Moda</option>
-                                    <option value="sports">⚽ Deportes</option>
-                                    <option value="home">🏠 Hogar</option>
-                                    <option value="books">📚 Libros</option>
-                                    <option value="toys">🧸 Juguetes</option>
-                                    <option value="beauty">💄 Belleza</option>
-                                    <option value="food">🍔 Alimentación</option>
-                                    <option value="automotive">🚗 Automoción</option>
-                                    <option value="other">📦 Otros</option>
+                                    <option value="electronics">{t('admin.categories.electronics')}</option>
+                                    <option value="fashion">{t('admin.categories.fashion')}</option>
+                                    <option value="sports">{t('admin.categories.sports')}</option>
+                                    <option value="home">{t('admin.categories.home')}</option>
+                                    <option value="books">{t('admin.categories.books')}</option>
+                                    <option value="toys">{t('admin.categories.toys')}</option>
+                                    <option value="beauty">{t('admin.categories.beauty')}</option>
+                                    <option value="food">{t('admin.categories.food')}</option>
+                                    <option value="automotive">{t('admin.categories.automotive')}</option>
+                                    <option value="garden">{t('admin.categories.garden')}</option>
+                                    <option value="pets">{t('admin.categories.pets')}</option>
+                                    <option value="other">{t('admin.categories.other')}</option>
                                 </select>
                             </div>
+
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Marketplace
+                                    {t('admin.marketplaceLabel')}
                                 </label>
                                 <select
                                     value={newProduct.marketplace}
@@ -232,7 +237,7 @@ function Admin() {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Precio (€) *
+                                    {t('admin.priceLabel')} *
                                 </label>
                                 <input
                                     type="number"
@@ -247,7 +252,7 @@ function Admin() {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Rating (0-5)
+                                    {t('admin.ratingLabel')}
                                 </label>
                                 <input
                                     type="number"
@@ -263,7 +268,7 @@ function Admin() {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Número de Reviews
+                                    {t('admin.reviewsLabel')}
                                 </label>
                                 <input
                                     type="number"
@@ -276,7 +281,7 @@ function Admin() {
 
                             <div className="md:col-span-2 lg:col-span-3">
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    URL de Imagen
+                                    {t('admin.imageLabel')}
                                 </label>
                                 <input
                                     type="text"
@@ -293,19 +298,19 @@ function Admin() {
                             disabled={loading}
                             className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {loading ? 'Añadiendo...' : '➕ Añadir Producto'}
+                            {loading ? t('admin.adding') : `➕ ${t('admin.addButton')}`}
                         </button>
                     </form>
                 </div>
 
                 {/* FORMULARIO: ACTUALIZAR PRECIO */}
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-6">💰 Actualizar Precio de Producto</h2>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">💰 {t('admin.updatePrice')}</h2>
                     <form onSubmit={handleUpdatePrice}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Seleccionar Producto
+                                    {t('admin.selectProduct')}
                                 </label>
                                 <select
                                     value={updatePrice.product_id}
@@ -313,7 +318,7 @@ function Admin() {
                                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
                                     required
                                 >
-                                    <option value="">-- Selecciona un producto --</option>
+                                    <option value="">-- {t('admin.selectProduct')} --</option>
                                     {products.map(product => (
                                         <option key={product.external_id} value={product.external_id}>
                                             {product.title} ({product.current_price}€)
@@ -324,7 +329,7 @@ function Admin() {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Nuevo Precio (€)
+                                    {t('admin.newPrice')}
                                 </label>
                                 <input
                                     type="number"
@@ -343,7 +348,7 @@ function Admin() {
                             disabled={loading}
                             className="w-full md:w-auto bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold py-3 px-8 rounded-lg hover:from-green-700 hover:to-teal-700 transform hover:scale-105 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {loading ? 'Actualizando...' : '💰 Actualizar Precio'}
+                            {loading ? t('admin.updating') : `💰 ${t('admin.updateButton')}`}
                         </button>
                     </form>
                 </div>
@@ -351,28 +356,28 @@ function Admin() {
                 {/* TABLA: PRODUCTOS EXISTENTES */}
                 <div className="bg-white rounded-xl shadow-md p-6">
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                        📦 Productos Actuales ({products.length})
+                        📦 {t('admin.currentProducts')} ({products.length})
                     </h2>
 
                     {loading ? (
-                        <p className="text-gray-600">Cargando productos...</p>
+                        <p className="text-gray-600">{t('admin.loading')}</p>
                     ) : products.length === 0 ? (
-                        <p className="text-gray-600">No hay productos. Añade uno usando el formulario de arriba.</p>
+                        <p className="text-gray-600">{t('admin.noProducts')}</p>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full">
                                 <thead className="bg-gray-100">
                                     <tr>
                                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">ASIN</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Título</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Marca</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Marketplace</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Precio</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('admin.titleLabel')}</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('admin.brandLabel')}</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('admin.marketplaceLabel')}</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('admin.priceLabel')}</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Rating</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Reviews</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Stock</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Última Act.</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Acciones</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('products.lastUpdate')}</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('common.delete')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
@@ -396,7 +401,7 @@ function Admin() {
                                                         ? 'bg-green-100 text-green-800'
                                                         : 'bg-red-100 text-red-800'
                                                     }`}>
-                                                    {product.stock_status === 'in_stock' ? 'En stock' : 'Sin stock'}
+                                                    {product.stock_status === 'in_stock' ? t('products.inStock') : t('products.outOfStock')}
                                                 </span>
                                             </td>
                                             <td className="px-4 py-3 text-sm text-gray-900">
