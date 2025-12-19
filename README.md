@@ -217,7 +217,7 @@ Abre tu navegador en: **http://localhost:8080**
 - Enlaces directos a marketplaces
 
 ### **3. Comparador**
-- Comparación lado a lado de hasta 4 productos
+- Comparación lado a lado de prodcutos
 - Destacado de mejor valor (precio, rating, reviews)
 - Comparación visual con colores
 
