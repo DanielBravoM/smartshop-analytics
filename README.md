@@ -1,247 +1,299 @@
-# 🛒 SmartShop Analytics v1
+# SmartShop Analytics - Sistema de Análisis de Precios de E-commerce
 
-Sistema completo de análisis y seguimiento de precios de e-commerce construido con arquitectura de microservicios.
+Sistema completo de análisis de precios de productos de diferentes marketplaces con alertas automáticas, comparación de productos y generación de reportes.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+---
 
 ## 📋 Tabla de Contenidos
 
-- [Características](#-características)
-- [Arquitectura](#-arquitectura)
-- [Requisitos Previos](#-requisitos-previos)
-- [Instalación](#-instalación)
-- [Uso](#-uso)
-- [Comandos Disponibles](#-comandos-disponibles)
-- [Accesos y Credenciales](#-accesos-y-credenciales)
-- [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Desarrollo](#-desarrollo)
-- [Troubleshooting](#-troubleshooting)
+- [Características](#características)
+- [Arquitectura](#arquitectura)
+- [Tecnologías](#tecnologías)
+- [Requisitos Previos](#requisitos-previos)
+- [Instalación y Ejecución](#instalación-y-ejecución)
+- [Acceso a la Aplicación](#acceso-a-la-aplicación)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Funcionalidades](#funcionalidades)
+
+---
 
 ## ✨ Características
 
-- 🔐 **Sistema de autenticación** con roles (Admin/Usuario)
-- 📊 **Dashboard analítico** con gráficos y estadísticas
-- 💰 **Seguimiento de precios** con historial temporal
-- 🔔 **Sistema de alertas** configurables
-- 📦 **Gestión de productos** desde panel de administración
-- 📈 **Comparador de productos** entre diferentes marketplaces
-- 📑 **Generación de reportes** detallados
-- 🗄️ **Interfaces gráficas** para gestión de bases de datos
+- 🔐 **Autenticación JWT** con roles de usuario (admin/user)
+- 📊 **Dashboard** con analytics en tiempo real
+- 🛍️ **Gestión de Productos** con seguimiento personalizado
+- 🔄 **Comparador** de hasta 4 productos simultáneos
+- 📈 **Reportes** con 4 tipos diferentes y exportación CSV
+- 🔔 **Sistema de Alertas** automáticas (4 tipos)
+- 💰 **Simulador de Precios** que actualiza precios cada 2 minutos
+- 🌍 **Multiidioma** (Español, Euskera, English)
+- 👨‍💼 **Panel de Administración** para gestión de productos
+- ⚡ **Auto-refresh** en Dashboard y Alertas
+
+---
 
 ## 🏗️ Arquitectura
 
-### Microservicios
-
-- **API Gateway** (Node.js + Express) - Puerto 3000
-- **Analytics Service** (Node.js + Express) - Puerto 4000
-- **Data Ingestion Service** (Python + Flask) - Puerto 5001
-
-### Bases de Datos
-
-- **PostgreSQL** - Usuarios, alertas, productos trackeados (Puerto 5433)
-- **MongoDB** - Productos, historial de precios, reviews (Puerto 27017)
-- **ElasticSearch** - Búsqueda y indexación (Puerto 9200)
-
-### Frontend
-
-- **React** con Tailwind CSS (Puerto 8080)
-
-### Herramientas de Gestión
-
-- **pgAdmin** - Interfaz para PostgreSQL (Puerto 5050)
-- **Mongo Express** - Interfaz para MongoDB (Puerto 8081)
-
-## 📋 Requisitos Previos
-
-Antes de instalar, asegúrate de tener:
-
-- **Docker** (versión 20.10 o superior)
-- **Docker Compose** (versión 2.0 o superior)
-- **Git**
-- Al menos **4GB de RAM libre**
-- Al menos **5GB de espacio en disco**
-
-### Verificar instalación de Docker
-```bash
-docker --version
-docker-compose --version
+### **Arquitectura de Microservicios**
+```
+┌─────────────┐
+│   Frontend  │ (React SPA)
+│  Port 8080  │
+└──────┬──────┘
+       │
+┌──────▼──────────┐
+│  API Gateway    │ (Node.js/Express)
+│   Port 3000     │
+└────┬────┬───┬───┘
+     │    │   │
+┌────▼────▼───▼──────────────────┐
+│                                 │
+│  ┌─────────────┐ ┌────────────┐│
+│  │ Analytics   │ │Data        ││
+│  │ Service     │ │Ingestion   ││
+│  │ (Node.js)   │ │(Python)    ││
+│  │ Port 4000   │ │Port 5001   ││
+│  └──────┬──────┘ └─────┬──────┘│
+│         │              │        │
+│  ┌──────▼──────┐ ┌─────▼──────┐│
+│  │Price        │ │            ││
+│  │Simulator    │ │            ││
+│  │(Node.js)    │ │            ││
+│  └─────────────┘ └────────────┘│
+└─────────────────────────────────┘
+         │              │
+    ┌────▼────┐    ┌────▼────┐
+    │PostgreSQL│   │ MongoDB │
+    │Port 5432│    │Port 27017│
+    └─────────┘    └─────────┘
 ```
 
-## 🚀 Instalación
+### **Componentes:**
 
-### 1. Clonar el repositorio
+1. **Frontend (React)**: SPA con routing, Nginx
+2. **API Gateway**: Proxy reverso, enrutamiento de peticiones
+3. **Analytics Service**: Lógica de negocio, alertas, reportes
+4. **Data Ingestion**: Simulación de scraping (Python Flask)
+5. **Price Simulator**: Actualización automática de precios cada 2 minutos
+6. **PostgreSQL**: Usuarios, seguimiento, alertas
+7. **MongoDB**: Productos, historial de precios
+
+---
+
+## 🛠️ Tecnologías
+
+### **Frontend:**
+- React 18
+- React Router v6
+- Axios
+- i18next (multiidioma)
+- Recharts (gráficos)
+- TailwindCSS
+- Lucide React (iconos)
+
+### **Backend:**
+- Node.js + Express (API Gateway, Analytics)
+- Python + Flask (Data Ingestion)
+- JWT (autenticación)
+- PostgreSQL (base de datos relacional)
+- MongoDB (base de datos NoSQL)
+
+### **DevOps:**
+- Docker
+- Docker Compose
+- Nginx
+
+---
+
+## 📦 Requisitos Previos
+
+### **0) Software Necesario:**
+
+- **Docker Desktop** (incluye Docker y Docker Compose)
+  - Windows/Mac: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
+  - Linux: Docker Engine + Docker Compose
+
+- **Git** (para clonar el repositorio)
+  - [https://git-scm.com/downloads](https://git-scm.com/downloads)
+
+**NOTA**: NO necesitas instalar Node.js, Python, PostgreSQL ni MongoDB localmente. Todo se ejecuta dentro de contenedores Docker.
+
+---
+
+## 🚀 Instalación y Ejecución
+
+### **1) Clonar el Repositorio:**
 ```bash
-git clone https://github.com/tu-usuario/smartshop-analytics-v1.git
-cd smartshop-analytics-v1
+git clone https://github.com/TU_USUARIO/smartshop-analytics.git
+cd smartshop-analytics
 ```
 
-### 2. Configurar variables de entorno (opcional)
+### **2) Configurar Variables de Entorno:**
 
-Si deseas cambiar las credenciales o configuraciones:
-```bash
-cp .env.example .env
-nano .env
+Crea un archivo `.env` en la raíz del proyecto (o copia `.env.example`):
+```env
+# PostgreSQL
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=smartshop
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=CAMBIAR_ESTO
+
+# MongoDB
+MONGO_HOST=mongodb
+MONGO_PORT=27017
+MONGO_DB=smartshop
+MONGO_URI=mongodb://mongodb:27017
+
+# JWT
+JWT_SECRET=tu_secret_key_muy_segura_cambiar_esto
+
+# Node Services
+NODE_ENV=production
 ```
 
-### 3. Construir e iniciar todos los servicios
+**⚠️ IMPORTANTE**: Cambia `POSTGRES_PASSWORD` y `JWT_SECRET` por valores seguros.
+
+### **3) Levantar Todos los Servicios:**
 ```bash
-make start
+docker-compose up -d
 ```
 
-O si no tienes `make`:
+Esto iniciará:
+- PostgreSQL (puerto 5432)
+- MongoDB (puerto 27017)
+- API Gateway (puerto 3000)
+- Analytics Service (puerto 4000)
+- Data Ingestion (puerto 5001)
+- Price Simulator (background worker)
+- Frontend (puerto 8080)
+
+### **4) Verificar que Todo Está Corriendo:**
 ```bash
-docker-compose up -d --build
+docker-compose ps
 ```
 
-### 4. Esperar a que todos los servicios estén listos
+Deberías ver todos los servicios con estado "Up".
+
+### **5) Ver Logs (Opcional):**
 ```bash
-make status
+# Ver todos los logs
+docker-compose logs -f
+
+# Ver logs de un servicio específico
+docker-compose logs -f frontend
+docker-compose logs -f price-simulator
 ```
 
-Deberías ver 9 contenedores en estado "Up".
+---
 
-### 5. Crear usuarios iniciales
+## 🌐 Acceso a la Aplicación
 
-Si es la primera vez que ejecutas el proyecto:
-```bash
-make setup
-```
-
-Esto creará:
-- Usuario administrador: `admin@smartshop.com` / `password123`
-- Usuario normal: `user@smartshop.com` / `password123`
-
-### 6. Acceder a la aplicación
+### **4) Acceder a la Parte Cliente:**
 
 Abre tu navegador en: **http://localhost:8080**
 
-¡Listo! 🎉
+### **Usuarios de Prueba:**
 
-## 💻 Uso
+| Usuario | Email | Password | Rol |
+|---------|-------|----------|-----|
+| Admin | admin@smartshop.com | admin123 | admin |
+| Usuario | user@smartshop.com | user123 | user |
 
-### Panel de Administración (Solo Admin)
+### **Endpoints de la API:**
 
-1. Inicia sesión como admin
-2. Ve a la sección "Admin" en el menú
-3. Desde aquí puedes:
-   - ➕ Añadir nuevos productos
-   - 💰 Actualizar precios
-   - 🗑️ Eliminar productos
+- Frontend: http://localhost:8080
+- API Gateway: http://localhost:3000
+- Analytics: http://localhost:4000
+- Data Ingestion: http://localhost:5001
 
-### Funcionalidades para todos los usuarios
+---
 
-- 📊 **Dashboard**: Visualiza estadísticas generales
-- 📦 **Productos**: Lista y búsqueda de productos
-- 📈 **Comparador**: Compara precios entre productos
-- 📑 **Reportes**: Genera reportes analíticos
-- 🔔 **Alertas**: Configura alertas de precio
+## 🎯 Funcionalidades
 
-## 📝 Comandos Disponibles
+### **1. Dashboard**
+- Métricas en tiempo real (productos seguidos, reviews)
+- Gráficos de distribución por marketplace y categoría
+- Evolución de precios histórica
+- Auto-refresh cada 30 segundos
 
-Si instalaste el Makefile:
+### **2. Productos**
+- Listado completo con búsqueda y filtros
+- Seguir/Dejar de seguir productos
+- Información detallada (precio, rating, reviews, stock)
+- Enlaces directos a marketplaces
 
-| Comando | Descripción |
-|---------|-------------|
-| `make help` | Mostrar todos los comandos |
-| `make start` | Iniciar todo el sistema |
-| `make stop` | Parar todo el sistema |
-| `make restart` | Reiniciar todos los servicios |
-| `make rebuild` | Reconstruir desde cero |
-| `make status` | Ver estado de los servicios |
-| `make logs` | Ver logs en tiempo real |
-| `make urls` | Mostrar todas las URLs de acceso |
-| `make setup` | Crear usuarios iniciales |
-| `make clean` | Limpiar todo (⚠️ elimina datos) |
+### **3. Comparador**
+- Comparación lado a lado de hasta 4 productos
+- Destacado de mejor valor (precio, rating, reviews)
+- Comparación visual con colores
 
-### Sin Makefile
+### **4. Reportes**
+- **Resumen General**: Estadísticas + gráficos
+- **Historial de Precios**: Evolución de precios (30 días)
+- **Análisis de Ventas**: Estimaciones de ventas e ingresos
+- **Comparación Top 10**: Productos más caros
+- Exportación a CSV de todos los reportes
+
+### **5. Sistema de Alertas**
+- **4 tipos de alertas**:
+  - 🔻 Bajada de precio (con umbral)
+  - 🔺 Subida de precio (con umbral)
+  - ✅ Disponible en stock
+  - ❌ Sin stock
+- Activar/Desactivar alertas
+- Edición inline de umbrales
+- Notificaciones de alertas disparadas
+- Auto-refresh cada 30 segundos
+
+### **6. Simulador de Precios**
+- Actualización automática cada 2 minutos
+- Cambio aleatorio de precios (+/- 15%)
+- Revisión automática de alertas
+- Almacenamiento en historial
+
+### **7. Panel de Administración**
+- Gestión completa de productos (CRUD)
+- Actualización masiva de precios
+- Solo accesible para administradores
+
+### **8. Sistema Multiidioma**
+- Español, Euskera, English
+- Cambio dinámico sin recargar
+- Todas las páginas traducidas
+
+---
+
+## 🛑 Detener los Servicios
 ```bash
-# Iniciar
-docker-compose up -d
-
-# Parar
+# Detener todos los contenedores
 docker-compose down
 
-# Reiniciar
-docker-compose restart
-
-# Ver logs
-docker-compose logs -f
-
-# Ver estado
-docker-compose ps
-
-# Reconstruir
-docker-compose up -d --build
+# Detener y eliminar volúmenes (⚠️ BORRA LOS DATOS)
+docker-compose down -v
 ```
 
-### Aplicación Web
+---
 
-## 🔧 Desarrollo
-
-### Modificar el código
-
-1. **Frontend**:
+## 🔧 Comandos Útiles
 ```bash
-   cd frontend/src
-   # Edita los archivos que necesites
-   make rebuild  # Reconstruir
+# Reconstruir un servicio específico
+docker-compose up -d --build frontend
+
+# Ver logs en tiempo real
+docker-compose logs -f price-simulator
+
+# Acceder a un contenedor
+docker exec -it smartshop-analytics bash
+
+# Reiniciar un servicio
+docker-compose restart analytics
 ```
 
-2. **Backend (Analytics/API Gateway)**:
-```bash
-   cd services/analytics/src  # o api-gateway/src
-   # Edita los archivos que necesites
-   docker-compose restart analytics  # o api-gateway
-```
+---
 
-3. **Python (Data Ingestion)**:
-```bash
-   cd services/data-ingestion
-   # Edita los archivos que necesites
-   docker-compose restart data-ingestion
-```
+## 👥 Autores
 
-### Añadir nuevas dependencias
+- Daniel Bravo - Ingeniería Informática - Universidad del País Vasco
 
-**Node.js**:
-```bash
-docker-compose exec analytics npm install nombre-paquete
-# o
-docker-compose exec api-gateway npm install nombre-paquete
-```
-
-**Python**:
-```bash
-# Añadir a requirements.txt
-docker-compose restart data-ingestion
-```
-
-### Ver logs de un servicio específico
-```bash
-docker-compose logs -f analytics
-docker-compose logs -f api-gateway
-docker-compose logs -f data-ingestion
-docker-compose logs -f frontend
-```
-
-### Acceder a la base de datos
-
-**PostgreSQL**:
-```bash
-docker exec -it smartshop-postgres psql -U admin -d smartshop
-```
-
-Comandos útiles en psql:
-```sql
-\dt                  -- Ver tablas
-\d users            -- Estructura de tabla users
-SELECT * FROM users; -- Ver usuarios
-\q                  -- Salir
-```
-
-**MongoDB**:
-```bash
-docker exec -it smartshop-mongodb mongosh smartshop
-```
 ---
