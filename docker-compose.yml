@@ -86,6 +86,29 @@ services:
       - postgres
       - mongodb
 
+  price-simulator:
+    build:
+      context: ./services/analytics
+      dockerfile: Dockerfile
+    container_name: smartshop-price-simulator
+    command: npm run simulator
+    depends_on:
+      - postgres
+      - mongodb
+    environment:
+      - NODE_ENV=production
+      - PORT=4001
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_DB=${MONGO_DB}
+      - JWT_SECRET=${JWT_SECRET}
+    networks:
+      - smartshop-network
+
   # Microservicio Python - Data Ingestion
   data-ingestion:
     build: ./services/data-ingestion

@@ -10,16 +10,20 @@ function Dashboard() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    fetchAnalytics();
+
+    // Auto-refresh cada 30 segundos
+    const interval = setInterval(() => {
+      console.log('🔄 Auto-refresh: actualizando dashboard...');
       fetchAnalytics();
-    }, 300);
-    
-    return () => clearTimeout(timer);
+    }, 30000); // 30 segundos
+
+    return () => clearInterval(interval);
   }, []);
 
   const fetchAnalytics = async (retryCount = 0) => {
     const maxRetries = 3;
-    
+
     try {
       setLoading(true);
       setError(null);
@@ -27,7 +31,7 @@ function Dashboard() {
       setAnalytics(response.data.analytics);
     } catch (err) {
       console.error(`Error fetching analytics (intento ${retryCount + 1}/${maxRetries}):`, err);
-      
+
       if (retryCount < maxRetries) {
         setTimeout(() => {
           fetchAnalytics(retryCount + 1);
@@ -38,7 +42,7 @@ function Dashboard() {
       }
       return;
     }
-    
+
     setLoading(false);
   };
 
@@ -64,7 +68,7 @@ function Dashboard() {
           <p className="text-gray-600 mb-6">
             {t('dashboard.noProductsDesc')}
           </p>
-          <a 
+          <a
             href="/products"
             className="inline-block bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 px-8 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition font-semibold"
           >

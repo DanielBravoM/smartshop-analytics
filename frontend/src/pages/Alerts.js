@@ -9,8 +9,10 @@ function Alerts() {
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingAlert, setEditingAlert] = useState(null);
+  const [triggeredAlerts, setTriggeredAlerts] = useState([]);
+  const [lastUpdate, setLastUpdate] = useState(new Date());
   const { t } = useTranslation();
-
+  
   const [newAlert, setNewAlert] = useState({
     product_external_id: '',
     alert_type: 'price_drop',
@@ -18,23 +20,46 @@ function Alerts() {
   });
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(); // Cargar inmediatamente
+
+    // Auto-refresh cada 30 segundos
+    const interval = setInterval(() => {
+      console.log('🔄 Auto-refresh: actualizando alertas...');
+      fetchData();
+    }, 30000); // 30 segundos
+
+    // Limpiar intervalo al desmontar componente
+    return () => {
+      clearInterval(interval);
+      console.log('⏹️ Auto-refresh detenido');
+    };
+  }, []); // Array vacío = solo ejecutar al montar
 
   const fetchData = async () => {
     try {
       setLoading(true);
 
+      const token = localStorage.getItem('token');
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      };
+
       // Obtener alertas
-      const alertsRes = await axios.get('/api/v1/alerts');
+      const alertsRes = await axios.get('/api/v1/alerts', config);
       setAlerts(alertsRes.data.alerts || []);
 
+      // Obtener alertas disparadas
+      const triggeredRes = await axios.get('/api/v1/alerts/triggered', config);
+      setTriggeredAlerts(triggeredRes.data.alerts || []);
+
       // Obtener IDs de productos seguidos
-      const followingRes = await axios.get('/api/v1/user-products/following');
-      const followedIds = followingRes.data.following || []; // ← Debe ser .following
+      const followingRes = await axios.get('/api/v1/user-products/following', config);
+      const followedIds = followingRes.data.following || [];
 
       // Obtener todos los productos
-      const productsRes = await axios.get('/api/v1/products');
+      const productsRes = await axios.get('/api/v1/products', config);
       const allProducts = productsRes.data.products || [];
 
       // Filtrar solo los productos seguidos
@@ -42,8 +67,9 @@ function Alerts() {
         followedIds.includes(p.external_id)
       );
 
-      console.log('Followed products:', followed); // Debug
+      console.log('Followed products:', followed);
       setFollowedProducts(followed);
+      setLastUpdate(new Date());
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -54,7 +80,6 @@ function Alerts() {
   const handleCreateAlert = async (e) => {
     e.preventDefault();
 
-    // Validar datos
     if (!newAlert.product_external_id) {
       alert(t('alerts.selectProduct') || 'Por favor selecciona un producto');
       return;
@@ -66,6 +91,7 @@ function Alerts() {
     }
 
     try {
+      const token = localStorage.getItem('token');
       const alertData = {
         product_external_id: newAlert.product_external_id,
         alert_type: newAlert.alert_type,
@@ -74,9 +100,11 @@ function Alerts() {
           : null
       };
 
-      console.log('Sending alert data:', alertData); // Debug
-
-      await axios.post('/api/v1/alerts', alertData);
+      await axios.post('/api/v1/alerts', alertData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
 
       setShowCreateModal(false);
       setNewAlert({
@@ -87,15 +115,20 @@ function Alerts() {
       fetchData();
     } catch (error) {
       console.error('Error creating alert:', error);
-      console.error('Response:', error.response?.data); // Debug
+      console.error('Response:', error.response?.data);
       alert(error.response?.data?.error || t('common.error'));
     }
   };
 
   const handleToggleActive = async (alertId, currentStatus) => {
     try {
+      const token = localStorage.getItem('token');
       await axios.put(`/api/v1/alerts/${alertId}`, {
         is_active: !currentStatus
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       fetchData();
     } catch (error) {
@@ -107,7 +140,12 @@ function Alerts() {
     if (!window.confirm(t('alerts.confirmDelete') || '¿Eliminar esta alerta?')) return;
 
     try {
-      await axios.delete(`/api/v1/alerts/${alertId}`);
+      const token = localStorage.getItem('token');
+      await axios.delete(`/api/v1/alerts/${alertId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       fetchData();
     } catch (error) {
       console.error('Error deleting alert:', error);
@@ -116,8 +154,13 @@ function Alerts() {
 
   const handleUpdateThreshold = async (alertId, newThreshold) => {
     try {
+      const token = localStorage.getItem('token');
       await axios.put(`/api/v1/alerts/${alertId}`, {
         threshold_price: parseFloat(newThreshold)
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       setEditingAlert(null);
       fetchData();
@@ -164,6 +207,9 @@ function Alerts() {
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">🔔 {t('alerts.title')}</h1>
             <p className="text-gray-600">{t('alerts.description')}</p>
+            <p className="text-xs text-gray-400 mt-1">
+              🔄 {t('alerts.lastUpdate')}: {lastUpdate.toLocaleTimeString()}
+            </p>
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
@@ -173,6 +219,39 @@ function Alerts() {
             {t('alerts.createAlert')}
           </button>
         </div>
+
+        {/* Alertas disparadas recientemente */}
+        {triggeredAlerts.length > 0 && (
+          <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-xl shadow-lg p-6 mb-6">
+            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+              🔥 {t('alerts.recentlyTriggered')} ({triggeredAlerts.length})
+            </h2>
+            <div className="space-y-3">
+              {triggeredAlerts.slice(0, 5).map((alert) => (
+                <div
+                  key={alert.id}
+                  className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-4 text-white"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold text-lg">{alert.product_title}</p>
+                      <p className="text-sm opacity-90">
+                        {getAlertIcon(alert.alert_type)} {t(`alerts.types.${alert.alert_type}`)}
+                        {alert.threshold_price && ` - €${alert.threshold_price}`}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-bold">€{alert.current_price}</p>
+                      <p className="text-xs opacity-75">
+                        {new Date(alert.last_triggered).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Lista de alertas */}
         <div className="bg-white rounded-xl shadow-lg p-6">

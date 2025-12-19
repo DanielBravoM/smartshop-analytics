@@ -161,7 +161,9 @@
       "createFirst": "Crea tu primera alerta para recibir notificaciones automáticas",
       "confirmDelete": "¿Eliminar esta alerta?",
       "selectProduct": "Por favor selecciona un producto",
-      "enterThreshold": "Por favor ingresa un precio umbral"
+      "enterThreshold": "Por favor ingresa un precio umbral",
+      "recentlyTriggered": "Alertas Disparadas Recientemente",
+      "lastUpdate": "Última actualización"
     },
     "reports": {
       "title": "Informes y Análisis",

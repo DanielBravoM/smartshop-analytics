@@ -161,7 +161,9 @@
       "save": "Save Alert",
       "noAlerts": "You don't have any configured alerts",
       "createFirst": "Create your first alert to receive automatic notifications",
-      "confirmDelete": "Delete this alert?"
+      "confirmDelete": "Delete this alert?",
+      "recentlyTriggered": "Recently Triggered Alerts",
+      "lastUpdate": "Last update"
     },
     "comparator": {
       "title": "Product Comparator",

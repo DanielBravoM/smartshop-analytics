@@ -624,22 +624,30 @@ app.get('/alerts', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
 
+    // Obtener alertas del usuario
     const result = await pgPool.query(
-      `SELECT a.*, p.title as product_title, p.current_price, p.marketplace
-       FROM alerts a
-       JOIN user_products up ON a.product_external_id = up.product_external_id AND up.user_id = $1
-       LEFT JOIN (
-         SELECT DISTINCT ON (external_id) external_id, title, current_price, marketplace
-         FROM products
-       ) p ON a.product_external_id = p.external_id
-       WHERE a.user_id = $1
-       ORDER BY a.created_at DESC`,
+      `SELECT * FROM alerts WHERE user_id = $1 ORDER BY created_at DESC`,
       [userId]
     );
 
+    const alerts = result.rows;
+
+    // Enriquecer con información de productos desde MongoDB
+    for (let alert of alerts) {
+      const product = await mongoDb.collection('products').findOne({
+        external_id: alert.product_external_id
+      });
+      
+      if (product) {
+        alert.product_title = product.title;
+        alert.current_price = product.current_price;
+        alert.marketplace = product.marketplace;
+      }
+    }
+
     res.json({
       success: true,
-      alerts: result.rows
+      alerts: alerts
     });
   } catch (error) {
     console.error('Error fetching alerts:', error);
@@ -733,6 +741,49 @@ app.delete('/alerts/:alertId', authenticateToken, async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Error al eliminar alerta'
+    });
+  }
+});
+
+// Obtener alertas disparadas recientemente (últimas 24 horas)
+app.get('/alerts/triggered', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await pgPool.query(
+      `SELECT * FROM alerts 
+       WHERE user_id = $1 
+       AND last_triggered IS NOT NULL 
+       AND last_triggered > NOW() - INTERVAL '24 hours'
+       ORDER BY last_triggered DESC`,
+      [userId]
+    );
+
+    const alerts = result.rows;
+
+    // Enriquecer con información de productos
+    for (let alert of alerts) {
+      const product = await mongoDb.collection('products').findOne({
+        external_id: alert.product_external_id
+      });
+      
+      if (product) {
+        alert.product_title = product.title;
+        alert.current_price = product.current_price;
+        alert.marketplace = product.marketplace;
+      }
+    }
+
+    res.json({
+      success: true,
+      alerts: alerts,
+      count: alerts.length
+    });
+  } catch (error) {
+    console.error('Error fetching triggered alerts:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error al obtener alertas disparadas'
     });
   }
 });

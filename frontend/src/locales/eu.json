@@ -161,7 +161,9 @@
       "createFirst": "Sortu zure lehen alerta jakinarazpen automatikoak jasotzeko",
       "confirmDelete": "Alerta hau ezabatu?",
       "selectProduct": "Mesedez hautatu produktu bat",
-      "enterThreshold": "Mesedez sartu prezio muga bat"
+      "enterThreshold": "Mesedez sartu prezio muga bat",
+      "recentlyTriggered": "Azkenaldian Aktibatutako Alertak",
+      "lastUpdate": "Azken eguneraketa"
     },
     "comparator": {
       "title": "Produktu Konparatzailea",

@@ -106,11 +106,15 @@ app.use('/api/comparator', createProxyMiddleware({
 // Proxy para Alertas
 app.use('/api/v1/alerts', async (req, res) => {
   try {
+    const token = req.headers.authorization;
     const response = await axios({
       method: req.method,
       url: `${NODE_SERVICE_URL}${req.originalUrl.replace('/api/v1/alerts', '/alerts')}`,
       data: req.body,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': token  // ← AÑADIR ESTO
+      }
     });
     res.status(response.status).json(response.data);
   } catch (error) {
@@ -340,6 +344,19 @@ app.get('/api/v1/reports/:type', async (req, res) => {
       success: false,
       error: 'Error al generar reporte'
     });
+  }
+});
+
+// Obtener alertas disparadas
+app.get('/api/v1/alerts/triggered', async (req, res) => {
+  try {
+    const token = req.headers.authorization;
+    const response = await axios.get(`${NODE_SERVICE_URL}/alerts/triggered`, {
+      headers: { Authorization: token }
+    });
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json(error.response?.data || { error: error.message });
   }
 });
 
