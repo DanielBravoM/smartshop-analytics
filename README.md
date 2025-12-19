@@ -130,29 +130,22 @@ cd smartshop-analytics
 
 ### **2) Configurar Variables de Entorno:**
 
-Crea un archivo `.env` en la raíz del proyecto (o copia `.env.example`):
-```env
-# PostgreSQL
-POSTGRES_HOST=postgres
-POSTGRES_PORT=5432
-POSTGRES_DB=smartshop
-POSTGRES_USER=admin
-POSTGRES_PASSWORD=CAMBIAR_ESTO
-
-# MongoDB
-MONGO_HOST=mongodb
-MONGO_PORT=27017
-MONGO_DB=smartshop
-MONGO_URI=mongodb://mongodb:27017
-
-# JWT
-JWT_SECRET=tu_secret_key_muy_segura_cambiar_esto
-
-# Node Services
-NODE_ENV=production
+Copia el archivo de ejemplo:
+```bash
+cp .env.example .env
 ```
 
-**⚠️ IMPORTANTE**: Cambia `POSTGRES_PASSWORD` y `JWT_SECRET` por valores seguros.
+O en Windows PowerShell:
+```powershell
+Copy-Item .env.example .env
+```
+
+El archivo `.env` ya contiene valores funcionales por defecto. **Opcionalmente** puedes editar `.env` y personalizar:
+- `POSTGRES_PASSWORD`: Contraseña para PostgreSQL (por defecto: `smartshop2024`)
+- `JWT_SECRET`: Clave secreta para JWT (ya incluye un valor seguro)
+- `NODE_ENV`: Cambia a `production` para entorno de producción
+
+**⚠️ IMPORTANTE**: El archivo `.env` no se sube a GitHub por seguridad. Usa siempre `.env.example` como plantilla.
 
 ### **3) Levantar Todos los Servicios:**
 ```bash
