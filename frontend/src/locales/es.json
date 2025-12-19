@@ -21,7 +21,17 @@
       "hasAccount": "¿Ya tienes cuenta?",
       "welcome": "Bienvenido a",
       "platformName": "SmartShop Analytics",
-      "platformDesc": "Análisis inteligente de productos de e-commerce"
+      "platformDesc": "Análisis inteligente de productos de e-commerce",
+      "createAccount": "Crear Cuenta",
+      "registerSubtitle": "Únete a SmartShop Analytics",
+      "namePlaceholder": "Tu nombre completo",
+      "confirmPassword": "Confirmar Contraseña",
+      "confirmPasswordPlaceholder": "Repite tu contraseña",
+      "passwordsDontMatch": "Las contraseñas no coinciden",
+      "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+      "registerError": "Error al registrar usuario",
+      "alreadyHaveAccount": "¿Ya tienes cuenta?",
+      "loginHere": "Inicia sesión aquí"
     },
     "dashboard": {
       "title": "Dashboard",

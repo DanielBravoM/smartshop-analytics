@@ -21,7 +21,20 @@
       "hasAccount": "Badaukazu konturik?",
       "welcome": "Ongi etorri",
       "platformName": "SmartShop Analytics-era",
-      "platformDesc": "E-commerce produktuen analisi adimenduna"
+      "platformDesc": "E-commerce produktuen analisi adimenduna",
+      "emailPlaceholder": "zure@emaila.eus",
+      "passwordPlaceholder": "Zure pasahitza",
+      "registerHere": "Erregistratu hemen",
+      "createAccount": "Kontua Sortu",
+      "registerSubtitle": "Bat egin SmartShop Analytics-ekin",
+      "namePlaceholder": "Zure izen osoa",
+      "confirmPassword": "Pasahitza Baieztatu",
+      "confirmPasswordPlaceholder": "Errepikatu zure pasahitza",
+      "passwordsDontMatch": "Pasahitzak ez datoz bat",
+      "passwordTooShort": "Pasahitzak gutxienez 6 karaktere izan behar ditu",
+      "registerError": "Errorea erabiltzailea erregistratzean",
+      "alreadyHaveAccount": "Badaukazu konturik?",
+      "loginHere": "Hasi saioa hemen"
     },
     "dashboard": {
       "title": "Aginte-panela",

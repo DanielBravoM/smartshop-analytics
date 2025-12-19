@@ -133,9 +133,11 @@ app.get('/analytics', authenticateToken, async (req, res) => {
     const totalProducts = followedProductIds.length;
     
     // 2. Total de reviews (solo de productos seguidos)
-    const totalReviews = await mongoDb.collection('reviews').countDocuments({
-      product_id: { $in: followedProductIds }
-    });
+    const followedProducts = await mongoDb.collection('products').find({
+      external_id: { $in: followedProductIds }
+    }).toArray();
+
+const totalReviews = followedProducts.reduce((sum, p) => sum + (p.review_count || 0), 0);
     
     // 3. Productos por marketplace (solo seguidos)
     const productsByMarketplace = await mongoDb.collection('products').aggregate([

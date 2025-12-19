@@ -12,6 +12,7 @@ Sistema completo de análisis de precios de productos de diferentes marketplaces
 - [Requisitos Previos](#requisitos-previos)
 - [Instalación y Ejecución](#instalación-y-ejecución)
 - [Acceso a la Aplicación](#acceso-a-la-aplicación)
+- [Usuarios](#usuarios)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Funcionalidades](#funcionalidades)
 
@@ -19,16 +20,16 @@ Sistema completo de análisis de precios de productos de diferentes marketplaces
 
 ## ✨ Características
 
-- 🔐 **Autenticación JWT** con roles de usuario (admin/user)
-- 📊 **Dashboard** con analytics en tiempo real
+- 🔐 **Autenticación JWT** con roles de usuario (admin/user) y sistema de registro
+- 📊 **Dashboard** con analytics en tiempo real y auto-refresh (30 seg)
 - 🛍️ **Gestión de Productos** con seguimiento personalizado
 - 🔄 **Comparador** de hasta 4 productos simultáneos
 - 📈 **Reportes** con 4 tipos diferentes y exportación CSV
-- 🔔 **Sistema de Alertas** automáticas (4 tipos)
-- 💰 **Simulador de Precios** que actualiza precios cada 2 minutos
-- 🌍 **Multiidioma** (Español, Euskera, English)
+- 🔔 **Sistema de Alertas** automáticas con notificaciones en tiempo real
+- 💰 **Simulador de Precios** que actualiza precios cada 2 minutos (+/- 15%)
+- 🌍 **Multiidioma** (Español, Euskera, English) con selector modal
 - 👨‍💼 **Panel de Administración** para gestión de productos
-- ⚡ **Auto-refresh** en Dashboard y Alertas
+- ⚡ **Auto-refresh** automático en Dashboard (30s) y Alertas (30s)
 
 ---
 
@@ -95,6 +96,7 @@ Sistema completo de análisis de precios de productos de diferentes marketplaces
 - Node.js + Express (API Gateway, Analytics)
 - Python + Flask (Data Ingestion)
 - JWT (autenticación)
+- bcrypt (hashing de contraseñas)
 - PostgreSQL (base de datos relacional)
 - MongoDB (base de datos NoSQL)
 
@@ -161,6 +163,10 @@ Esto iniciará:
 - Price Simulator (background worker)
 - Frontend (puerto 8080)
 
+**Primera ejecución:** Puede tardar 5-10 minutos en descargar imágenes y construir contenedores.
+
+**Ejecuciones posteriores:** ~30 segundos.
+
 ### **4) Verificar que Todo Está Corriendo:**
 ```bash
 docker-compose ps
@@ -176,22 +182,17 @@ docker-compose logs -f
 # Ver logs de un servicio específico
 docker-compose logs -f frontend
 docker-compose logs -f price-simulator
+
+# Presiona Ctrl+C para salir
 ```
 
 ---
 
 ## 🌐 Acceso a la Aplicación
 
-### **4) Acceder a la Parte Cliente:**
+### **Acceder a la Aplicación Web:**
 
 Abre tu navegador en: **http://localhost:8080**
-
-### **Usuarios de Prueba:**
-
-| Usuario | Email | Password | Rol |
-|---------|-------|----------|-----|
-| Admin | admin@smartshop.com | admin123 | admin |
-| Usuario | user@smartshop.com | user123 | user |
 
 ### **Endpoints de la API:**
 
@@ -202,12 +203,40 @@ Abre tu navegador en: **http://localhost:8080**
 
 ---
 
+## 👥 Usuarios
+
+### **Crear un Nuevo Usuario:**
+
+1. Ve a: **http://localhost:8080/register**
+2. Completa el formulario de registro
+3. Automáticamente se te creará una cuenta de tipo **user**
+
+### **Convertir un Usuario a Admin:**
+```bash
+# Acceder a PostgreSQL
+docker exec -it smartshop-postgres psql -U admin -d smartshop
+
+# Ver usuarios
+SELECT id, email, name, role FROM users;
+
+# Cambiar un usuario a admin
+UPDATE users SET role = 'admin' WHERE email = 'tu@email.com';
+
+# Salir
+\q
+```
+
+**Nota:** El sistema de registro genera usuarios con role `user` por defecto. Para tener permisos de administrador, debes cambiar el role manualmente desde PostgreSQL.
+
+---
+
 ## 🎯 Funcionalidades
 
 ### **1. Dashboard**
-- Métricas en tiempo real (productos seguidos, reviews)
+- Métricas en tiempo real (productos seguidos, ventas estimadas, crecimiento)
 - Gráficos de distribución por marketplace y categoría
-- Evolución de precios histórica
+- Evolución de precios histórica (últimos 30 días)
+- Top productos por precio
 - Auto-refresh cada 30 segundos
 
 ### **2. Productos**
@@ -217,7 +246,7 @@ Abre tu navegador en: **http://localhost:8080**
 - Enlaces directos a marketplaces
 
 ### **3. Comparador**
-- Comparación lado a lado de hasta 4 productos
+- Comparación lado a lado de productos
 - Destacado de mejor valor (precio, rating, reviews)
 - Comparación visual con colores
 
@@ -230,30 +259,41 @@ Abre tu navegador en: **http://localhost:8080**
 
 ### **5. Sistema de Alertas**
 - **4 tipos de alertas**:
-  - 🔻 Bajada de precio (con umbral)
-  - 🔺 Subida de precio (con umbral)
+  - 🔻 Bajada de precio (con umbral personalizable)
+  - 🔺 Subida de precio (con umbral personalizable)
   - ✅ Disponible en stock
   - ❌ Sin stock
-- Activar/Desactivar alertas
-- Edición inline de umbrales
-- Notificaciones de alertas disparadas
+- Activar/Desactivar alertas individualmente
+- Edición inline de umbrales de precio
+- Notificaciones de alertas disparadas en las últimas 24h
 - Auto-refresh cada 30 segundos
+- Historial de cuándo se disparó cada alerta
 
 ### **6. Simulador de Precios**
 - Actualización automática cada 2 minutos
 - Cambio aleatorio de precios (+/- 15%)
-- Revisión automática de alertas
-- Almacenamiento en historial
+- Revisión automática de alertas después de cada actualización
+- Almacenamiento en historial de precios (MongoDB)
+- Logs visibles en consola del contenedor
 
 ### **7. Panel de Administración**
 - Gestión completa de productos (CRUD)
 - Actualización masiva de precios
-- Solo accesible para administradores
+- Solo accesible para usuarios con role='admin'
 
 ### **8. Sistema Multiidioma**
-- Español, Euskera, English
-- Cambio dinámico sin recargar
-- Todas las páginas traducidas
+- 3 idiomas: Español, Euskera, English
+- Selector modal con banderas e iconos
+- Cambio dinámico sin recargar página
+- Persistencia en localStorage
+- Todas las páginas y componentes traducidos
+
+### **9. Autenticación y Registro**
+- Sistema de registro con validación de contraseñas
+- Login con JWT tokens (válidos por 7 días)
+- Protección de rutas según rol (user/admin)
+- Hashing de contraseñas con bcrypt
+- Context API para gestión de estado global
 
 ---
 
@@ -273,20 +313,41 @@ docker-compose down -v
 # Reconstruir un servicio específico
 docker-compose up -d --build frontend
 
+# Reconstruir todo sin caché
+docker-compose build --no-cache
+docker-compose up -d
+
 # Ver logs en tiempo real
 docker-compose logs -f price-simulator
+
+# Acceder a PostgreSQL
+docker exec -it smartshop-postgres psql -U admin -d smartshop
+
+# Acceder a MongoDB
+docker exec -it smartshop-mongodb mongosh smartshop
 
 # Acceder a un contenedor
 docker exec -it smartshop-analytics bash
 
 # Reiniciar un servicio
 docker-compose restart analytics
+
+# Ver estado de todos los servicios
+docker-compose ps
 ```
+
+---
+
+## 📝 Notas Importantes
+
+- **Primera ejecución:** Los productos de ejemplo se insertan automáticamente al iniciar el servicio `data-ingestion`
+- **Precios:** El simulador comienza a actualizar precios 2 minutos después de levantar los servicios
+- **Alertas:** Se revisan automáticamente cada vez que el simulador actualiza precios
+- **Datos persistentes:** Los datos se guardan en volúmenes de Docker. Para borrarlos usa `docker-compose down -v`
+- **Desarrollo:** Puedes editar el código y reconstruir solo el servicio afectado con `--build`
 
 ---
 
 ## 👥 Autores
 
 - Daniel Bravo - Ingeniería Informática - Universidad del País Vasco
-
----

@@ -12,6 +12,7 @@ import Comparator from './pages/Comparator';
 import Reports from './pages/Reports';
 import Alerts from './pages/Alerts';
 import Admin from './pages/Admin';
+import Register from './pages/Register';
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -33,10 +34,15 @@ function AppContent() {
         {user && <Header />}
         
         <Routes>
-          {/* Ruta pública */}
+          {/* Rutas públicas */}
           <Route 
             path="/login" 
             element={user ? <Navigate to="/" replace /> : <Login />} 
+          />
+          
+          <Route 
+            path="/register" 
+            element={user ? <Navigate to="/" replace /> : <Register />} 
           />
 
           {/* Rutas protegidas (requieren estar logueado) */}
